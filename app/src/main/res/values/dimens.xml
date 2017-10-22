@@ -5,4 +5,9 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+
+    <dimen name="signin_horizontal_margin">48dp</dimen>
+    <dimen name="padding_bottom_pull_down">16dp</dimen>
+
 </resources>

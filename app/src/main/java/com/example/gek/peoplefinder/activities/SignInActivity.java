@@ -6,11 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,35 +27,31 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
 
 import io.realm.ObjectServerError;
-import io.realm.Realm;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
 import static com.example.gek.peoplefinder.PeopleFinderApplication.AUTH_URL;
 
-
-//  https://developers.facebook.com/docs/facebook-login/android
-
 public class SignInActivity extends AppCompatActivity implements SyncUser.Callback {
-    public static final String ACTION_IGNORE_CURRENT_USER = "action.ignoreCurrentUser";
-    private static final String TAG = "A_SIGNIN";
 
-    private AutoCompleteTextView usernameView;
-    private EditText passwordView;
+    public static final String ACTION_IGNORE_CURRENT_USER = "action.ignoreCurrentUser";
+
+    private EditText etUserName;
+    private EditText etPassword;
     private View progressView;
     private View loginFormView;
     private FacebookAuth facebookAuth;
     private GoogleAuth googleAuth;
-
+    private Button btnSignIn, btnRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        usernameView = (AutoCompleteTextView) findViewById(R.id.username);
-        passwordView = (EditText) findViewById(R.id.password);
-        passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        etUserName = (EditText) findViewById(R.id.etUserName);
+        etPassword = (EditText) findViewById(R.id.etPassword);
+        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.log_in || id == EditorInfo.IME_NULL) {
@@ -67,8 +62,16 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
             }
         });
 
-        final Button signInButton = (Button) findViewById(R.id.btnSignIn);
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        btnRegister = (Button) findViewById(R.id.btnRegister);
+        btnRegister.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SignInActivity.this, RegisterActivity.class));
+            }
+        });
+
+        btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        btnSignIn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -79,17 +82,17 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         progressView = findViewById(R.id.sign_in_progress);
 
         // Check if we already got a user, if yes, just continue automatically
-//        if (savedInstanceState == null) {
-//            if (!ACTION_IGNORE_CURRENT_USER.equals(getIntent().getAction())) {
-//                final SyncUser user = SyncUser.currentUser();
-//                if (user != null) {
-//                    loginComplete(user);
-//                }
-//            }
-//        }
+        if (savedInstanceState == null) {
+            if (!ACTION_IGNORE_CURRENT_USER.equals(getIntent().getAction())) {
+                final SyncUser user = SyncUser.currentUser();
+                if (user != null) {
+                    loginComplete(user);
+                }
+            }
+        }
 
         // Setup Facebook Authentication
-        facebookAuth = new FacebookAuth((LoginButton) findViewById(R.id.btnLoginFacebook)) {
+        facebookAuth = new FacebookAuth((LoginButton) findViewById(R.id.facebookLogin)) {
             @Override
             public void onRegistrationComplete(final LoginResult loginResult) {
                 UserManager.setAuthMode(UserManager.AUTH_MODE.FACEBOOK);
@@ -99,7 +102,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         };
 
         // Setup Google Authentication
-        googleAuth = new GoogleAuth((SignInButton) findViewById(R.id.btnLoginGoogle), this) {
+        googleAuth = new GoogleAuth((SignInButton) findViewById(R.id.googleSignIn), this) {
             @Override
             public void onRegistrationComplete(GoogleSignInResult result) {
                 UserManager.setAuthMode(UserManager.AUTH_MODE.GOOGLE);
@@ -115,8 +118,6 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         };
     }
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -129,30 +130,30 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
 
         createInitialDataIfNeeded();
 
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
 
     private void attemptLogin() {
-        usernameView.setError(null);
-        passwordView.setError(null);
+        etUserName.setError(null);
+        etPassword.setError(null);
 
-        final String email = usernameView.getText().toString();
-        final String password = passwordView.getText().toString();
+        final String email = etUserName.getText().toString();
+        final String password = etPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         if (TextUtils.isEmpty(password)) {
-            passwordView.setError(getString(R.string.error_invalid_password));
-            focusView = passwordView;
+            etPassword.setError(getString(R.string.error_invalid_password));
+            focusView = etPassword;
             cancel = true;
         }
 
         if (TextUtils.isEmpty(email)) {
-            usernameView.setError(getString(R.string.error_field_required));
-            focusView = usernameView;
+            etUserName.setError(getString(R.string.error_field_required));
+            focusView = etUserName;
             cancel = true;
         }
 
@@ -206,15 +207,13 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
             default:
                 errorMsg = error.toString();
         }
-        Log.d(TAG, "onError: error code = " + error.getErrorCode());
-        Log.d(TAG, "onError: " + errorMsg);
         Toast.makeText(SignInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
     }
 
     private static void createInitialDataIfNeeded() {
-        final Realm realm = Realm.getDefaultInstance();
-        //noinspection TryFinallyCanBeTryWithResources
-        try {
+//        final Realm realm = Realm.getDefaultInstance();
+//        //noinspection TryFinallyCanBeTryWithResources
+//        try {
 //            if (realm.where(TaskListList.class).count() != 0) {
 //                return;
 //            }
@@ -224,15 +223,15 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
 //                    if (realm.where(TaskListList.class).count() == 0) {
 //                        final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
 //                        final TaskList taskList = new TaskList();
-//                        taskList.setId(RealmTasksApplication.DEFAULT_LIST_ID);
-//                        taskList.setText(RealmTasksApplication.DEFAULT_LIST_NAME);
+//                        taskList.setId(PeopleFinderApplication.DEFAULT_LIST_ID);
+//                        taskList.setText(PeopleFinderApplication.DEFAULT_LIST_NAME);
 //                        taskListList.getItems().add(taskList);
 //                    }
 //                }
 //            });
-        } finally {
-            realm.close();
-        }
+//        } finally {
+//            realm.close();
+//        }
     }
 }
 

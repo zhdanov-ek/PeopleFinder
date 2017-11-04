@@ -57,3 +57,5 @@ dependencies {
     // Dependency for Google Sign-In
     compile 'com.google.android.gms:play-services-auth:10.2.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

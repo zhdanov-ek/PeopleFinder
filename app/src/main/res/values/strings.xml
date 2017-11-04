@@ -21,5 +21,20 @@
     <string name="activity_sign_in_label">Sign In</string>
     <string name="activity_register_label">Register</string>
 
+	
+
+    <string name="menu_item_register">Register</string>
+    <string name="title_deleted">Deleted</string>
+    <string name="release_to_create_item">Release to Create Item</string>
+    <string name="pull_to_create_item">Pull to Create Item</string>
+    <string name="no_item">There is no item in this list to complete.</string>
+    <string name="server_client_id">299391824375-k3hdrdtq8g4rkh1i0pvomn397ehk92nl.apps.googleusercontent.com</string>
+    <string name="badge_placeholder">3</string>
+    <string name="switch_to_lists">Switch to Lists</string>
+    <string name="row_text_placeholder">Text</string>
+    <string name="done_indicator_content_description">Done Indicator</string>
+    <string name="delete_icon_content_description">Delete Icon</string>
+    <string name="cell_arrow_content_description">Arrow</string>
+
 
 </resources>

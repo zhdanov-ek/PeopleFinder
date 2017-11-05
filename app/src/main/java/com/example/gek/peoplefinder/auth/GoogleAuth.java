@@ -3,8 +3,10 @@ package com.example.gek.peoplefinder.auth;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 
+import com.example.gek.peoplefinder.R;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -18,14 +20,17 @@ import com.google.android.gms.common.api.GoogleApiClient;
  * https://developers.google.com/identity/sign-in/android/start-integrating
  */
 public abstract class GoogleAuth implements GoogleApiClient.OnConnectionFailedListener {
+    private static final String TAG = "H_GOOGLE";
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 10;
 
     public GoogleAuth(final SignInButton btnSignIn, final FragmentActivity fragmentActivity) {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
-             //   .requestIdToken(fragmentActivity.getString(R.string.server_client_id))
+                .requestIdToken(fragmentActivity.getString(R.string.default_web_client_id))
                 .build();
+
+        Log.d(TAG, "GoogleAuth: client id = " + fragmentActivity.getString(R.string.default_web_client_id));
 
         mGoogleApiClient = new GoogleApiClient.Builder(fragmentActivity)
                 .enableAutoManage(fragmentActivity /* FragmentActivity */, this /* OnConnectionFailedListener */)

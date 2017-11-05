@@ -16,6 +16,8 @@
 
 package com.example.gek.peoplefinder.auth;
 
+import android.util.Log;
+
 import com.example.gek.peoplefinder.PeopleFinderApplication;
 import com.facebook.login.LoginManager;
 
@@ -24,6 +26,7 @@ import io.realm.SyncConfiguration;
 import io.realm.SyncUser;
 
 public class UserManager {
+    private static final String TAG = "H_USER_MANAGER";
     // Supported authentication mode
     public enum AUTH_MODE {
         PASSWORD,
@@ -56,6 +59,7 @@ public class UserManager {
 
     // Configure Realm for the current active user
     public static void setActiveUser(SyncUser user) {
+        Log.d(TAG, "setActiveUser: " + user.toString());
         SyncConfiguration defaultConfig = new SyncConfiguration.Builder(user, PeopleFinderApplication.REALM_URL).build();
         Realm.setDefaultConfiguration(defaultConfig);
     }

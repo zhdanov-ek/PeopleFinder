@@ -27,6 +27,7 @@ import io.realm.SyncUser;
 
 public class UserManager {
     private static final String TAG = "H_USER_MANAGER";
+
     // Supported authentication mode
     public enum AUTH_MODE {
         PASSWORD,

@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,13 +23,9 @@ import com.example.gek.peoplefinder.auth.GoogleAuth;
 import com.example.gek.peoplefinder.auth.UserManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import io.realm.ObjectServerError;
 import io.realm.SyncCredentials;
@@ -51,7 +46,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
     private FacebookAuth facebookAuth;
     private GoogleAuth googleAuth;
     private Button btnSignIn, btnRegister;
-
+    private String mode;
 
 
     @Override
@@ -106,6 +101,10 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
             @Override
             public void onRegistrationComplete(final LoginResult loginResult) {
                 UserManager.setAuthMode(UserManager.AUTH_MODE.FACEBOOK);
+
+                // TODO: 08.11.2017 need make request to Facebook for get data of user profile
+                mode = "FACEBOOK";
+
                 SyncCredentials credentials = SyncCredentials.facebook(loginResult.getAccessToken().getToken());
                 SyncUser.loginAsync(credentials, AUTH_URL, SignInActivity.this);
             }
@@ -122,6 +121,8 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
                         "\n" + "displayName = " + acct.getDisplayName() +
                         "\n" + "photo = " + acct.getPhotoUrl();
                 Log.d(TAG, "onRegistrationComplete: " + info);
+
+                mode = "GOOGLE";
 
                 SyncCredentials credentials = SyncCredentials.google(acct.getIdToken());
                 SyncUser.loginAsync(credentials, AUTH_URL, SignInActivity.this);
@@ -147,7 +148,9 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
 
         createInitialDataIfNeeded();
 
-        startActivity(new Intent(this, MainActivity.class));
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("MODE", mode);
+        startActivity(intent);
         finish();
     }
 
@@ -178,6 +181,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
             focusView.requestFocus();
         } else {
             showProgress(true);
+            mode = "PASSWORD";
             SyncUser.loginAsync(SyncCredentials.usernamePassword(email, password, false), PeopleFinderApplication.AUTH_URL, this);
         }
     }

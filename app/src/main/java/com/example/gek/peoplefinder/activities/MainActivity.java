@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.auth.UserManager;
@@ -24,6 +25,13 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null && bundle.containsKey("MODE")){
+            String mode =  bundle.getString("MODE");
+            TextView tvText = (TextView) findViewById(R.id.tvText);
+            tvText.setText(mode);
+        }
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

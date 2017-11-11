@@ -23,11 +23,16 @@ import com.example.gek.peoplefinder.auth.FacebookAuth;
 import com.example.gek.peoplefinder.auth.GoogleAuth;
 import com.example.gek.peoplefinder.auth.UserManager;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.realm.ObjectServerError;
 import io.realm.SyncCredentials;
@@ -103,10 +108,29 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
             public void onRegistrationComplete(final LoginResult loginResult) {
                 UserManager.setAuthMode(AuthMode.FACEBOOK);
 
-                // TODO: 08.11.2017 need make request to Facebook for get data of user profile
-
-                SyncCredentials credentials = SyncCredentials.facebook(loginResult.getAccessToken().getToken());
-                SyncUser.loginAsync(credentials, AUTH_URL, SignInActivity.this);
+                // Get date of profile Facebook and make login to realm
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                try {
+                                    SettingsHelper.setUserName(object.getString("name"));
+                                    SettingsHelper.setUserEmail(object.getString("email"));
+                                    String profilePicUrl = object.getJSONObject("picture").getJSONObject("data").getString("url");
+                                    SettingsHelper.setUserProfileImageUrl(profilePicUrl);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                // Login to Realm
+                                SyncCredentials credentials = SyncCredentials.facebook(loginResult.getAccessToken().getToken());
+                                SyncUser.loginAsync(credentials, AUTH_URL, SignInActivity.this);
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender,birthday,picture.type(large)");
+                request.setParameters(parameters);
+                request.executeAsync();
             }
         };
 

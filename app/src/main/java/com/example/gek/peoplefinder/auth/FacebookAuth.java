@@ -20,7 +20,7 @@ public abstract class FacebookAuth {
     public FacebookAuth(final LoginButton loginBtn) {
         callbackManager = CallbackManager.Factory.create();
         this.loginButton = loginBtn;
-        loginButton.setReadPermissions("email");
+        loginButton.setReadPermissions("email", "public_profile");
 
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {

@@ -28,16 +28,14 @@ import io.realm.SyncUser;
 public class UserManager {
     private static final String TAG = "H_USER_MANAGER";
 
-    // Supported authentication mode
-    public enum AUTH_MODE {
-        PASSWORD,
-        FACEBOOK,
-        GOOGLE
-    }
-    private static AUTH_MODE mode = AUTH_MODE.PASSWORD; // default
+    private static AuthMode mode = AuthMode.PASSWORD; // default
 
-    public static void setAuthMode(AUTH_MODE m) {
+    public static void setAuthMode(AuthMode m) {
         mode = m;
+    }
+
+    public static AuthMode getAuthMode(){
+        return mode;
     }
 
     public static void logoutActiveUser() {

@@ -2,6 +2,7 @@ package com.example.gek.peoplefinder;
 
 import android.app.Application;
 
+import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.facebook.FacebookSdk;
 
 import io.realm.Realm;
@@ -18,6 +19,7 @@ public class PeopleFinderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        SettingsHelper.init(getApplicationContext());
         Realm.init(this);
         FacebookSdk.sdkInitialize(this);
         RealmLog.setLevel(LogLevel.TRACE);

@@ -8,15 +8,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.auth.UserManager;
+import com.example.gek.peoplefinder.helpers.SettingsHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = "A_MAIN";
     private boolean logoutAfterClose;
 
     @Override
@@ -26,13 +29,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null && bundle.containsKey("MODE")){
-            String mode =  bundle.getString("MODE");
-            TextView tvText = (TextView) findViewById(R.id.tvText);
-            tvText.setText(mode);
-        }
 
+        Log.d(TAG, "onCreate: provider = " + UserManager.getAuthMode().toString() +
+        "\n user name = " + SettingsHelper.getUserName() +
+        "\n email = " + SettingsHelper.getUserEmail() +
+        "\n image url = " + SettingsHelper.getUserProfileImageUrl());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity
              * executed before reaching here.
              */
             UserManager.logoutActiveUser();
+            SettingsHelper.signOut();
             logoutAfterClose = false;
         }
 

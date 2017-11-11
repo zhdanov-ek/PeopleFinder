@@ -18,9 +18,11 @@ import android.widget.Toast;
 
 import com.example.gek.peoplefinder.PeopleFinderApplication;
 import com.example.gek.peoplefinder.R;
+import com.example.gek.peoplefinder.auth.AuthMode;
 import com.example.gek.peoplefinder.auth.FacebookAuth;
 import com.example.gek.peoplefinder.auth.GoogleAuth;
 import com.example.gek.peoplefinder.auth.UserManager;
+import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -46,7 +48,6 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
     private FacebookAuth facebookAuth;
     private GoogleAuth googleAuth;
     private Button btnSignIn, btnRegister;
-    private String mode;
 
 
     @Override
@@ -100,10 +101,9 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         facebookAuth = new FacebookAuth((LoginButton) findViewById(R.id.facebookLogin)) {
             @Override
             public void onRegistrationComplete(final LoginResult loginResult) {
-                UserManager.setAuthMode(UserManager.AUTH_MODE.FACEBOOK);
+                UserManager.setAuthMode(AuthMode.FACEBOOK);
 
                 // TODO: 08.11.2017 need make request to Facebook for get data of user profile
-                mode = "FACEBOOK";
 
                 SyncCredentials credentials = SyncCredentials.facebook(loginResult.getAccessToken().getToken());
                 SyncUser.loginAsync(credentials, AUTH_URL, SignInActivity.this);
@@ -114,15 +114,18 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         googleAuth = new GoogleAuth((SignInButton) findViewById(R.id.googleSignIn), this) {
             @Override
             public void onRegistrationComplete(GoogleSignInResult result) {
-                UserManager.setAuthMode(UserManager.AUTH_MODE.GOOGLE);
+                UserManager.setAuthMode(AuthMode.GOOGLE);
                 GoogleSignInAccount acct = result.getSignInAccount();
 
-                String info = "email = " + acct.getEmail() +
-                        "\n" + "displayName = " + acct.getDisplayName() +
-                        "\n" + "photo = " + acct.getPhotoUrl();
-                Log.d(TAG, "onRegistrationComplete: " + info);
-
-                mode = "GOOGLE";
+                if (acct.getDisplayName() != null && acct.getDisplayName().length() > 0){
+                    SettingsHelper.setUserName(acct.getDisplayName());
+                } else if (acct.getGivenName() != null && acct.getGivenName().length() > 0){
+                    SettingsHelper.setUserName(acct.getGivenName());
+                }
+                SettingsHelper.setUserEmail(acct.getEmail());
+                if (acct.getPhotoUrl() != null && acct.getPhotoUrl().toString().length() > 0) {
+                    SettingsHelper.setUserProfileImageUrl(acct.getPhotoUrl().toString());
+                }
 
                 SyncCredentials credentials = SyncCredentials.google(acct.getIdToken());
                 SyncUser.loginAsync(credentials, AUTH_URL, SignInActivity.this);
@@ -145,11 +148,8 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
 
     private void loginComplete(SyncUser user) {
         UserManager.setActiveUser(user);
-
         createInitialDataIfNeeded();
-
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("MODE", mode);
         startActivity(intent);
         finish();
     }
@@ -181,7 +181,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
             focusView.requestFocus();
         } else {
             showProgress(true);
-            mode = "PASSWORD";
+            UserManager.setAuthMode(AuthMode.PASSWORD);
             SyncUser.loginAsync(SyncCredentials.usernamePassword(email, password, false), PeopleFinderApplication.AUTH_URL, this);
         }
     }
@@ -208,8 +208,14 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         });
     }
 
+
+
+    // Realm auth success
     @Override
     public void onSuccess(SyncUser user) {
+        if (UserManager.getAuthMode() == AuthMode.PASSWORD){
+            SettingsHelper.setUserName(etUserName.getText().toString());
+        }
         showProgress(false);
         loginComplete(user);
     }

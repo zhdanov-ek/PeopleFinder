@@ -1,5 +1,6 @@
 package com.example.gek.peoplefinder.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -7,22 +8,34 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.gek.peoplefinder.R;
+import com.example.gek.peoplefinder.auth.UserManager;
+import com.example.gek.peoplefinder.helpers.SettingsHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String TAG = "A_MAIN";
+    private boolean logoutAfterClose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initDrawer();
+    }
+
+    private void initDrawer(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -31,6 +44,18 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        ((TextView)navigationView.getHeaderView(0).findViewById(R.id.tvName)).setText(SettingsHelper.getUserName());
+        ImageView ivProfileImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivProfileImage);
+        String urlImage = SettingsHelper.getUserProfileImageUrl();
+        RequestOptions options = new RequestOptions()
+                .circleCrop()
+                .error(R.drawable.ic_person)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+            Glide.with(this)
+                    .load(urlImage)
+                    .apply(options)
+                    .into(ivProfileImage);
     }
 
     @Override
@@ -43,27 +68,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -73,20 +78,42 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_sign_out) {
+            signOut();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void signOut(){
+        Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+        intent.setAction(SignInActivity.ACTION_IGNORE_CURRENT_USER);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        logoutAfterClose = true;
+    }
+
+    @Override
+    protected void onStop() {
+//        if (adapter != null) {
+//            touchHelper.attachToRecyclerView(null);
+//            adapter = null;
+//        }
+//        realm.removeAllChangeListeners();
+//        realm.close();
+//        realm = null;
+        if (logoutAfterClose) {
+            /*
+             * We need call logout() here since onCreate() of the next Activity is already
+             * executed before reaching here.
+             */
+            UserManager.logoutActiveUser();
+            SettingsHelper.signOut();
+            logoutAfterClose = false;
+        }
+
+        super.onStop();
     }
 }

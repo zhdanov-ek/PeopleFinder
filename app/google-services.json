@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "324961284306",
+    "project_id": "peoplefinder-183820"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:324961284306:android:819d4a8d7ab6004d",
+        "android_client_info": {
+          "package_name": "com.example.gek.peoplefinder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "324961284306-ks5se3rjda8llihl67v58amk2empueuc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gek.peoplefinder",
+            "certificate_hash": "a24472669deb6801044d60f4c158a04d26c4ebec"
+          }
+        },
+        {
+          "client_id": "324961284306-u4uaucaikbqe1bpeimkt6qif03bfrla0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD45HDwypJkAjQ4RLfMQUqH39q0BRQS0RQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

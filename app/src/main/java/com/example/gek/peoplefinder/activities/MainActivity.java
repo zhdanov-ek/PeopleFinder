@@ -10,8 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.auth.UserManager;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
@@ -26,15 +30,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initDrawer();
+    }
+
+    private void initDrawer(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-        Log.d(TAG, "onCreate: provider = " + UserManager.getAuthMode().toString() +
-        "\n user name = " + SettingsHelper.getUserName() +
-        "\n email = " + SettingsHelper.getUserEmail() +
-        "\n image url = " + SettingsHelper.getUserProfileImageUrl());
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -43,6 +44,18 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        ((TextView)navigationView.getHeaderView(0).findViewById(R.id.tvName)).setText(SettingsHelper.getUserName());
+        ImageView ivProfileImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivProfileImage);
+        String urlImage = SettingsHelper.getUserProfileImageUrl();
+        RequestOptions options = new RequestOptions()
+                .circleCrop()
+                .error(R.drawable.ic_person)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+            Glide.with(this)
+                    .load(urlImage)
+                    .apply(options)
+                    .into(ivProfileImage);
     }
 
     @Override

@@ -58,6 +58,10 @@ dependencies {
 
     // Dependency for Google Sign-In
     compile 'com.google.android.gms:play-services-auth:10.2.1'
+
+    // Glide
+    compile 'com.github.bumptech.glide:glide:4.3.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -3,15 +3,21 @@ package com.example.gek.peoplefinder.fragments;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.models.Mark;
@@ -23,13 +29,19 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MapFragment extends Fragment implements
+        OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
     private GoogleApiClient mGoogleApiClient;
@@ -76,13 +88,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         connectToGoogleApiClient();
     }
 
-    private void updateUi(){
+    private void updateUi() {
+        int sizeIconPx = 100;
+        RequestOptions options = new RequestOptions().circleCrop().override(sizeIconPx);
+
+
         if ((mMap != null) && (mListMarks != null)){
             mMap.clear();
-            for (Mark mark: mListMarks) {
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(mark.getLatitude(), mark.getLongitude()))
-                        .title(mark.getName()));
+            for (final Mark mark: mListMarks) {
+
+                URL path = null;
+                try {
+                    path = new URL("https://defcon.ru/wp-content/uploads/2015/12/ico_android-3.png");
+                } catch (MalformedURLException e) {
+                    Log.d("333333333333", "updateUi: ");
+                }
+
+                Glide.with(this)
+                        .asBitmap()
+                        .apply(options)
+                        .load(path)
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(mark.getLatitude(), mark.getLongitude()))
+                                        .icon(BitmapDescriptorFactory.fromBitmap(resource))
+                                        .title(mark.getName()));
+                            }
+                        });
             }
 
             // save current zoom of camera and set normal zoom if first show the map

@@ -1,15 +1,20 @@
 package com.example.gek.peoplefinder.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.auth.UserManager;
+import com.example.gek.peoplefinder.fragments.MapFragment;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
 
 public class MainActivity extends AppCompatActivity
@@ -26,11 +32,20 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "A_MAIN";
     private boolean logoutAfterClose;
 
+    private FrameLayout container;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+       // container = (FrameLayout) findViewById(R.id.container);
         initDrawer();
+
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        MapFragment mapFragment = new MapFragment();
+        fragmentTransaction.add(R.id.container, mapFragment, null);
+        fragmentTransaction.commit();
     }
 
     private void initDrawer(){
@@ -57,6 +72,7 @@ public class MainActivity extends AppCompatActivity
                     .apply(options)
                     .into(ivProfileImage);
     }
+
 
     @Override
     public void onBackPressed() {

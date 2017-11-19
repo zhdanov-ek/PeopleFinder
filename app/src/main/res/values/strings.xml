@@ -3,6 +3,10 @@
     <string name="facebook_app_id">488741768164674</string>
     <string name="fb_login_protocol_scheme">fb488741768164674</string>
 
+    <!--https://console.developers.google.com/apis/credentials?project=peoplefinder-183820&authuser=0-->
+    <string name="google_maps_key">AIzaSyB6gPzrKk5v4SX-5zO5yDubOurgr_gSTkc</string>
+
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

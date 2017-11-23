@@ -51,6 +51,9 @@
     <string name="settings_provider_gps">GPS</string>
     <string name="settings_provider_network">Network</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- ACTIONS -->
+    <string name="action_settings">Settings</string>
+
+    <string name="permission_location_not_granted">No permissions for use locales</string>
+    <string name="open_settings_for_grant_permissions">Open settings for grant permission</string>
 </resources>

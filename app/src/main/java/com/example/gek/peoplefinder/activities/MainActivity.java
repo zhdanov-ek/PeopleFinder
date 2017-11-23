@@ -1,8 +1,15 @@
 package com.example.gek.peoplefinder.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,24 +31,44 @@ import com.example.gek.peoplefinder.auth.UserManager;
 import com.example.gek.peoplefinder.fragments.MapFragment;
 import com.example.gek.peoplefinder.fragments.MarkFragment;
 import com.example.gek.peoplefinder.fragments.SettingsFragment;
+import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
+import com.example.gek.peoplefinder.helpers.Utils;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity  implements
+        NavigationView.OnNavigationItemSelectedListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "A_MAIN";
     private boolean logoutAfterClose;
     private FragmentManager mFragmentManager;
+    private GoogleApiClient mGoogleApiClient;
+    private Toolbar toolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         initDrawer();
         mFragmentManager = getSupportFragmentManager();
 
+        GoogleApiClient.Builder builder = new GoogleApiClient.Builder(this);
+        builder.addApi(LocationServices.API);
+        builder.addConnectionCallbacks(this);
+        builder.addOnConnectionFailedListener(this);
+        mGoogleApiClient = builder.build();
+        if (checkLocationPermission(Const.RC_INIT_LOCATION)){
+            mGoogleApiClient.connect();
+        }
     }
+
+
 
     private void initDrawer(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,6 +107,52 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    private boolean checkLocationPermission(int requestCode) {
+        boolean isGranted = false;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            isGranted = true;
+        } else if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    requestCode);
+            isGranted = false;
+        } else {
+            isGranted = true;
+        }
+        return isGranted;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            switch (requestCode) {
+                case Const.RC_INIT_LOCATION:
+                    mGoogleApiClient.connect();
+                    break;
+                case Const.RC_OPEN_MAP:
+                    Log.d(TAG, "onRequestPermissionsResult: granted");
+//                    showMapFragment();
+                    break;
+                case Const.RC_START_SERVICE:
+                    // TODO: 11/23/2017 start service
+                    break;
+            }
+        }
+    }
+
+
+//    private void showSnackToSettingsOpen() {
+//        Snackbar.make(toolbar, R.string.permission_location_not_granted, Snackbar.LENGTH_LONG)
+//                .setAction(R.string.action_settings, new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Utils.openPermissionSettings(getBaseContext());
+//                    }
+//                })
+//                .show();
+//    }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -110,6 +184,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void signOut(){
+        // TODO: 11/23/2017 stop service
+        if (mGoogleApiClient.isConnected()){
+            mGoogleApiClient.disconnect();
+        }
         Intent intent = new Intent(MainActivity.this, SignInActivity.class);
         intent.setAction(SignInActivity.ACTION_IGNORE_CURRENT_USER);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -149,10 +227,12 @@ public class MainActivity extends AppCompatActivity
 //    }
 
     private void showMapFragment(){
-        FragmentTransaction ft = mFragmentManager.beginTransaction();
-        ft.replace(R.id.container, new MapFragment(), null);
-        ft.addToBackStack(null);
-        ft.commit();
+        if (checkLocationPermission(Const.RC_OPEN_MAP)){
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            ft.replace(R.id.container, new MapFragment(), null);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
     }
 
     private void showMarkFragment(){
@@ -170,4 +250,17 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        mGoogleApiClient.reconnect();
+    }
 }

@@ -42,6 +42,8 @@ public class MapFragment extends Fragment implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
+    
+    private static final String TAG = "F_MAP";
     private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
     private GoogleApiClient mGoogleApiClient;
@@ -54,13 +56,28 @@ public class MapFragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(TAG, "onCreate: ");
 
         mMyLocation = new LatLng(49.451558, 32.044757);
         mListMarks = new ArrayList<>();
         mListMarks.add(new Mark("Market", 49.441436, 32.065216, new Date()));
         mListMarks.add(new Mark("Bridge", 49.478453, 32.038448, new Date()));
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: ");
+        View v = inflater.inflate(R.layout.fragment_map, container, false);
+        mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mMapFragment.getMapAsync(this);
+        return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
         GoogleApiClient.Builder builder = new GoogleApiClient.Builder(getActivity());
         builder.addApi(LocationServices.API);
         builder.addConnectionCallbacks(this);
@@ -68,16 +85,12 @@ public class MapFragment extends Fragment implements
         mGoogleApiClient = builder.build();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_map, container, false);
-        mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mMapFragment.getMapAsync(this);
-        return v;
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: ");
+        mGoogleApiClient.disconnect();
     }
-
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -179,4 +192,6 @@ public class MapFragment extends Fragment implements
             mGoogleApiClient.connect();
         }
     }
+
+
 }

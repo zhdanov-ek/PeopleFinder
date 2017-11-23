@@ -26,7 +26,6 @@
     <string name="activity_sign_in_label">Sign In</string>
     <string name="activity_register_label">Register</string>
 
-	
 
     <string name="menu_item_register">Register</string>
     <string name="title_deleted">Deleted</string>
@@ -41,4 +40,17 @@
     <string name="cell_arrow_content_description">Arrow</string>
 
 
+    <string name="mes_service_work">Your location detect in current moment</string>
+
+    <!-- SETTINGS -->
+    <string name="settings_rate_location">Frequency of get my location %1$s seconds</string>
+    <string name="settings_rate_smaller">Bad for battery</string>
+    <string name="settings_rate_bigger">Good for battery</string>
+    <string name="settings_show_old_wariors">Show old info about wariors</string>
+    <string name="settings_provider_title">Provider for define the location</string>
+    <string name="settings_provider_gps">GPS</string>
+    <string name="settings_provider_network">Network</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

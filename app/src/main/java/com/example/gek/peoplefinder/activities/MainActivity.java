@@ -26,12 +26,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.gek.peoplefinder.LocationService;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.auth.UserManager;
 import com.example.gek.peoplefinder.fragments.LogsFragment;
 import com.example.gek.peoplefinder.fragments.MapFragment;
 import com.example.gek.peoplefinder.fragments.MarkFragment;
 import com.example.gek.peoplefinder.fragments.SettingsFragment;
+import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.example.gek.peoplefinder.helpers.Utils;
@@ -189,10 +191,11 @@ public class MainActivity extends AppCompatActivity  implements
     }
 
     private void signOut(){
-        // TODO: 11/23/2017 stop service
         if (mGoogleApiClient.isConnected()){
             mGoogleApiClient.disconnect();
         }
+        Connection.getInstance().setServiceRunning(false);
+        stopService(new Intent(this, LocationService.class));
         Intent intent = new Intent(MainActivity.this, SignInActivity.class);
         intent.setAction(SignInActivity.ACTION_IGNORE_CURRENT_USER);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

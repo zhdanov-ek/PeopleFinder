@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
  */
 
 public class SettingsHelper {
-    private static final int DEFAULT_FREQUENCY = 30 * 1000;
+    private static final int DEFAULT_FREQUENCY = 20 * 1000;
 
     private static final String PARAM_USER_NAME = "user_name";
     private static final String PARAM_USER_EMAIL = "user_email";

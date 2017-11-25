@@ -1,5 +1,6 @@
 package com.example.gek.peoplefinder.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,9 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.gek.peoplefinder.LocationService;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
@@ -25,6 +28,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private SeekBar sbRate;
     private TextView tvStateRate;
     private SwitchCompat switchOldWariors;
+    private SwitchCompat switchServiceEnable;
     private LogHelper logHelper;
     private RadioButton rbNetwork, rbGps;
 
@@ -55,6 +59,23 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 Connection.getInstance().setShowOldPersons(isChecked);
             }
         });
+        switchServiceEnable = (SwitchCompat) rootView.findViewById(R.id.switchServiceEnable);
+        switchServiceEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    if (!Connection.getInstance().isServiceRunning()){
+                        getActivity().startService(new Intent(getActivity(), LocationService.class));
+                        Toast.makeText(getActivity(), "Service started", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    getActivity().stopService(new Intent(getActivity(), LocationService.class));
+                    Connection.getInstance().setServiceRunning(false);
+                    Toast.makeText(getActivity(), "Service stopped", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         sbRate.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -70,13 +91,15 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 int frequency = seekBar.getProgress() * Const.BASE_STEP_FREQUENCY + Const.BASE_STEP_FREQUENCY;
-                Connection.getInstance().setFrequencyLocationUpdate(frequency);
-                logHelper.writeLog("Set delay to " + frequency, new Date());
+                Connection.getInstance().setFrequencyLocationUpdate(frequency * 1000);
+                logHelper.writeLog("Set delay to " + frequency + " seconds");
             }
         });
         updateLabelFrequency(Connection.getInstance().getFrequencyLocationUpdate());
-        sbRate.setProgress(Connection.getInstance().getFrequencyLocationUpdate()/Const.BASE_STEP_FREQUENCY - 1);
+        sbRate.setProgress((Connection.getInstance().getFrequencyLocationUpdate()/1000)/Const.BASE_STEP_FREQUENCY - 1);
         switchOldWariors.setChecked(Connection.getInstance().isShowOldPersons());
+
+        switchServiceEnable.setChecked(Connection.getInstance().isServiceRunning());
 
         return rootView;
     }

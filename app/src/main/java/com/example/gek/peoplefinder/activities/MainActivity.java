@@ -28,6 +28,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.auth.UserManager;
+import com.example.gek.peoplefinder.fragments.LogsFragment;
 import com.example.gek.peoplefinder.fragments.MapFragment;
 import com.example.gek.peoplefinder.fragments.MarkFragment;
 import com.example.gek.peoplefinder.fragments.SettingsFragment;
@@ -169,6 +170,10 @@ public class MainActivity extends AppCompatActivity  implements
                 showMarkFragment();
                 break;
 
+            case R.id.nav_logs:
+                showLogsFragment();
+                break;
+
             case R.id.nav_settings:
                 showSettingsFragment();
                 break;
@@ -233,6 +238,13 @@ public class MainActivity extends AppCompatActivity  implements
             ft.addToBackStack(null);
             ft.commit();
         }
+    }
+
+    private void showLogsFragment(){
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+        ft.replace(R.id.container, new LogsFragment(), null);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     private void showMarkFragment(){

@@ -12,7 +12,6 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/etMarkName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -21,21 +20,18 @@
     </android.support.design.widget.TextInputLayout>
 
     <RadioGroup
-        android:id="@+id/radioGroupMode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/rbCurrentLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
             android:text="current location" />
 
         <RadioButton
-            android:id="@+id/rbManualLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="manual location" />
@@ -53,7 +49,6 @@
             android:layout_weight="1">
 
             <EditText
-                android:id="@+id/etLat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -68,7 +63,6 @@
             android:layout_weight="1">
 
             <EditText
-                android:id="@+id/etLng"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -80,7 +74,6 @@
 
 
     <Button
-        android:id="@+id/btnAddMark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

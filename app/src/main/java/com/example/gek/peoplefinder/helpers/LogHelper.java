@@ -30,11 +30,11 @@ public class LogHelper {
     }
 
 
-    public void writeLog(String mes, Date date){
+    public void writeLog(String mes){
         try {
             BufferedWriter bw = new BufferedWriter(
                     new OutputStreamWriter(ctx.openFileOutput(FILE_NAME, MODE_APPEND)));
-            bw.write(formatDate(date) + " | " + mes + "\n");
+            bw.write(formatDate(new Date()) + " | " + mes + "\n");
             bw.close();
             Log.d(TAG, "writeLog: write " + mes);
         } catch (FileNotFoundException e) {
@@ -46,21 +46,21 @@ public class LogHelper {
 
 
     public String readLog(){
-        String result = "";
+        StringBuilder result = new StringBuilder();
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     ctx.openFileInput(FILE_NAME)));
             String str = "";
             while ((str = br.readLine()) != null) {
-                result = result + str +"\n";
+                result.append(str).append("\n");
             }
-            Log.d(TAG, "readLog: succes");
+            Log.d(TAG, "readLog: success");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
+        return result.toString();
     }
 
     public void clearLog(){

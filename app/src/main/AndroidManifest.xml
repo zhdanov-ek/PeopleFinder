@@ -54,10 +54,7 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".LocationService"
-            android:enabled="false"
-            android:exported="false"></service>
+        <service android:name=".LocationService"/>
     </application>
 
 </manifest>

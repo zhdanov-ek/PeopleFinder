@@ -54,7 +54,7 @@ public class Connection {
         this.lastLocation = lastLocation;
     }
 
-    public Boolean getServiceRunning() {
+    public Boolean isServiceRunning() {
         return isServiceRunning;
     }
     public void setServiceRunning(Boolean serviceRunning) {
@@ -71,8 +71,9 @@ public class Connection {
     public int getFrequencyLocationUpdate() {
         return frequencyLocationUpdate;
     }
-    public void setFrequencyLocationUpdate(int frequencyLocationUpdate) {
-        this.frequencyLocationUpdate = frequencyLocationUpdate;
+    public void setFrequencyLocationUpdate(int ms) {
+        SettingsHelper.setFrequencyOfUpdate(ms);
+        this.frequencyLocationUpdate = ms;
     }
 
     public int getLocationProvider() {

@@ -107,6 +107,18 @@
 
             <include layout="@layout/horizontal_line"/>
 
+            <LinearLayout
+                style="@style/ItemSettings">
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switchServiceEnable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Enable LocationService" />
+            </LinearLayout>
+
+            <include layout="@layout/horizontal_line"/>
+
         </LinearLayout>
 
     </ScrollView>

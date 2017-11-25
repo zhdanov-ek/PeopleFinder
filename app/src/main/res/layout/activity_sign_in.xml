@@ -24,7 +24,6 @@
         android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/username_sign_in_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -94,7 +93,6 @@
             </LinearLayout>
 
             <com.facebook.login.widget.LoginButton
-                android:id="@+id/facebookLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
@@ -109,7 +107,6 @@
                 android:paddingTop="12dp" />
 
             <com.google.android.gms.common.SignInButton
-                android:id="@+id/googleSignIn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"

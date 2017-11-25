@@ -32,8 +32,11 @@ public class LocationService extends Service {
 
     private Handler handler = new Handler();
     private static final String TAG = "LOCATION_SERVICE";
-    private LogHelper logHelper;
+    private LogHelper mLogHelper;
     private LocationManager mLocationManager;
+    private Date mLastDate;
+    private Date mCurrentDate;
+    private long mDelay;
 
     public LocationService() {
     }
@@ -46,7 +49,15 @@ public class LocationService extends Service {
                 Connection.getInstance().setLastLocation(
                         new LatLng(location.getLatitude(), location.getLongitude()));
 //                writePositionToDb(location.getLatitude(), location.getLongitude());
-                logHelper.writeLog(location.getProvider() + " pass location", new Date());
+                String msg = new StringBuilder()
+                        .append(location.getLatitude())
+                        .append(" : ")
+                        .append(location.getLongitude())
+                        .append(" ")
+                        .append(location.getProvider()).toString();
+
+                Log.d(TAG, msg);
+                mLogHelper.writeLog(msg);
                 stopLocationUpdates();
             }
         }
@@ -58,13 +69,13 @@ public class LocationService extends Service {
         @Override
         public void onProviderEnabled(String provider) {
             Toast.makeText(LocationService.this, "Provider enabled " + provider, Toast.LENGTH_SHORT).show();
-            logHelper.writeLog(provider + " enabled", new Date());
+            mLogHelper.writeLog(provider + " enabled");
         }
 
         @Override
         public void onProviderDisabled(String provider) {
             Toast.makeText(LocationService.this, "Provider disabled " + provider, Toast.LENGTH_SHORT).show();
-            logHelper.writeLog(provider + " disabled", new Date());
+            mLogHelper.writeLog(provider + " disabled");
         }
     };
 
@@ -72,11 +83,14 @@ public class LocationService extends Service {
     public void onCreate() {
         Log.d(TAG, "onCreate: ");
         super.onCreate();
+        mLastDate = new Date();
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         Connection.getInstance().setServiceRunning(true);
-        if (logHelper == null){
-            logHelper = new LogHelper(getBaseContext());
+        if (mLogHelper == null){
+            mLogHelper = new LogHelper(getApplicationContext());
         }
+        mLogHelper.clearLog();
+        mLogHelper.writeLog("Service created");
         Log.d(TAG, "onStartCommand: setServiceRunning - true");
     }
 
@@ -89,12 +103,15 @@ public class LocationService extends Service {
     }
 
 
-    // start every n-seconds for get location if service running
+    // Start every n-seconds and retrieve location if service running
     private Runnable runnableGetLocation = new Runnable() {
         @Override
         public void run() {
-            if (Connection.getInstance().getServiceRunning()){
-                logHelper.writeLog("start Runnable", new Date());
+            if (Connection.getInstance().isServiceRunning()){
+                mCurrentDate = new Date();
+                mDelay = (mCurrentDate.getTime() - mLastDate.getTime())/1000;
+                mLastDate = mCurrentDate;
+                mLogHelper.writeLog(new StringBuilder("Request location (").append(mDelay).append(")").toString());
                 handler.postDelayed(this, Connection.getInstance().getFrequencyLocationUpdate());
                 startLocationUpdates();
             } else {
@@ -122,7 +139,7 @@ public class LocationService extends Service {
             }
             mLocationManager.requestLocationUpdates(provider, 0, 0, mLocationListener);
         } else {
-            Toast.makeText(getBaseContext(), "No permissions for location", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No permissions for location", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -130,7 +147,7 @@ public class LocationService extends Service {
     /** stop listen update about our location */
     private void stopLocationUpdates() {
         mLocationManager.removeUpdates(mLocationListener);
-        logHelper.writeLog("Remove location updates", new Date());
+        mLogHelper.writeLog("Removing listener from LocationManager");
 
     }
 
@@ -145,7 +162,7 @@ public class LocationService extends Service {
 //        warior.setKey(Connection.getInstance().getUserKey());
 //        warior.setDate(new Date());
 //        FbHelper.updateWariorPosition(warior);
-//        logHelper.writeLog(latitude + " - " + longitude + " (write to DB)", new Date());
+//        mLogHelper.writeLog(latitude + " - " + longitude + " (write to DB)", new Date());
 //    }
 
     private void showNotification() {
@@ -166,7 +183,7 @@ public class LocationService extends Service {
                         this, 0, intent, 0);
         nfBuilder.setContentIntent(pendingIntent);
 
-        // end notification and mark service how high priority
+        // Send notification and mark service how high priority
         startForeground(Const.NOTIFICATION_ID, nfBuilder.build());
     }
 
@@ -188,7 +205,7 @@ public class LocationService extends Service {
     @Override
     public void onDestroy() {
         mLocationManager.removeUpdates(mLocationListener);
-        Log.d(TAG, "onDestroy: disconnect from GoogleApiClient");
+        Log.d(TAG, "onDestroy: ");
         super.onDestroy();
     }
 

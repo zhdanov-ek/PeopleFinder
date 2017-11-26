@@ -20,14 +20,12 @@ import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.LogHelper;
 
-import java.util.Date;
-
 public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     public static final String TAG = "F_SETTINGS";
     private SeekBar sbRate;
     private TextView tvStateRate;
-    private SwitchCompat switchOldWariors;
+    private SwitchCompat switchOldPerson;
     private SwitchCompat switchServiceEnable;
     private LogHelper logHelper;
     private RadioButton rbNetwork, rbGps;
@@ -52,8 +50,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
         tvStateRate = (TextView) rootView.findViewById(R.id.tvStateRate);
         sbRate = (SeekBar) rootView.findViewById(R.id.sbRate);
-        switchOldWariors = (SwitchCompat) rootView.findViewById(R.id.switchOldWariors);
-        switchOldWariors.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switchOldPerson = (SwitchCompat) rootView.findViewById(R.id.switchOldPerson);
+        switchOldPerson.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Connection.getInstance().setShowOldPersons(isChecked);
@@ -97,7 +95,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         });
         updateLabelFrequency(Connection.getInstance().getFrequencyLocationUpdate());
         sbRate.setProgress((Connection.getInstance().getFrequencyLocationUpdate()/1000)/Const.BASE_STEP_FREQUENCY - 1);
-        switchOldWariors.setChecked(Connection.getInstance().isShowOldPersons());
+        switchOldPerson.setChecked(Connection.getInstance().isShowOldPersons());
 
         switchServiceEnable.setChecked(Connection.getInstance().isServiceRunning());
 

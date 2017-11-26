@@ -98,11 +98,11 @@
             <LinearLayout
                 style="@style/ItemSettings">
                 <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/switchOldWariors"
+                    android:id="@+id/switchOldPerson"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@string/settings_show_old_wariors" />
+                    android:text="@string/settings_show_old_person" />
             </LinearLayout>
 
             <include layout="@layout/horizontal_line"/>

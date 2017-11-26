@@ -29,7 +29,7 @@
     <string name="settings_rate_location">Frequency of get my location %1$s seconds</string>
     <string name="settings_rate_smaller">Bad for battery</string>
     <string name="settings_rate_bigger">Good for battery</string>
-    <string name="settings_show_old_wariors">Show old info about wariors</string>
+    <string name="settings_show_old_person">Show old info about person</string>
     <string name="settings_provider_title">Provider for define the location</string>
     <string name="settings_provider_gps">GPS</string>
     <string name="settings_provider_network">Network</string>

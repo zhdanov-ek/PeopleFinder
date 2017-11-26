@@ -53,22 +53,28 @@ public class LogsFragment extends Fragment {
             }
         });
 
+
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Connection.getInstance().isServiceRunning()){
+            fabRefresh.setVisibility(View.VISIBLE);
+        } else {
+            fabRefresh.setVisibility(View.GONE);
+        }
     }
 
     // TODO: 11/25/2017 This need move to AsyncTask
     private void clickFab(){
-        if (Connection.getInstance().isServiceRunning()){
-            fabRefresh.setClickable(false);
-            rotationAnim.start();
-            String log = logHelper.readLog();
-            if ((log != null) && (log.length() > 0)) {
-                tvLog.setText(log);
-            }
-            fabRefresh.setClickable(true);
-        } else {
-            Toast.makeText(getActivity(), "You must run service firstly", Toast.LENGTH_SHORT).show();
+        fabRefresh.setClickable(false);
+        rotationAnim.start();
+        String log = logHelper.readLog();
+        if ((log != null) && (log.length() > 0)) {
+            tvLog.setText(log);
         }
-
+        fabRefresh.setClickable(true);
     }
 }

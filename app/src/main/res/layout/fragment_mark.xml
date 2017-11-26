@@ -33,17 +33,17 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/rbCurrentLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="current location" />
-
-        <RadioButton
             android:id="@+id/rbManualLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="manual location" />
+
+        <RadioButton
+            android:id="@+id/rbCurrentLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="current location" />
 
     </RadioGroup>
 

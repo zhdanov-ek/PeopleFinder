@@ -22,4 +22,26 @@ public class Utils {
         intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         ctx.startActivity(intent);
     }
+
+    public static Boolean validateLat(String stringLat) {
+        boolean isValid = true;
+        try {
+            double lat = Double.parseDouble(stringLat);
+            isValid =  ((lat >= -90) && (lat <= 90));
+        } catch (NumberFormatException e){
+            isValid = false;
+        }
+        return isValid;
+    }
+
+    public static Boolean validateLng(String stringLng) {
+        boolean isValid = true;
+        try {
+            double lng = Double.parseDouble(stringLng);
+            isValid =  ((lng >= -180) && (lng <= 180));
+        } catch (NumberFormatException e){
+            isValid = false;
+        }
+        return isValid;
+    }
 }

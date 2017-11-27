@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +15,10 @@ import android.widget.Toast;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.auth.UserManager;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import io.realm.ObjectServerError;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
@@ -25,20 +28,18 @@ import static com.example.gek.peoplefinder.PeopleFinderApplication.AUTH_URL;
 
 public class RegisterActivity extends AppCompatActivity implements SyncUser.Callback {
 
-    private EditText etUserName;
-    private EditText etPassword;
-    private EditText etPasswordConfirmation;
-    private View progressView;
-    private View registerFormView;
-    private Button btnTryRegister;
+    @BindView(R.id.etUserName) protected EditText etUserName;
+    @BindView(R.id.etPassword) protected EditText etPassword;
+    @BindView(R.id.etPasswordConfirmation) protected EditText etPasswordConfirmation;
+    @BindView(R.id.progressView) protected View progressView;
+    @BindView(R.id.registerFormView) protected View registerFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        etUserName = (EditText) findViewById(R.id.etUserName);
-        etPassword = (EditText) findViewById(R.id.etPassword);
-        etPasswordConfirmation = (EditText) findViewById(R.id.etPasswordConfirmation);
+        ButterKnife.bind(this);
+
         etPasswordConfirmation.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -49,20 +50,11 @@ public class RegisterActivity extends AppCompatActivity implements SyncUser.Call
                 return false;
             }
         });
-
-
-        btnTryRegister = (Button) findViewById(R.id.btnTryRegister);
-        btnTryRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptRegister();
-            }
-        });
-
-        registerFormView = findViewById(R.id.register_form);
-        progressView = findViewById(R.id.progressView);
     }
 
+    @OnClick(R.id.btnTryRegister) protected void onClickTryRegister(){
+        attemptRegister();
+    }
 
     private void attemptRegister() {
         etUserName.setError(null);

@@ -18,6 +18,7 @@ import com.example.gek.peoplefinder.helpers.LogHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class LogsFragment extends Fragment {
 
@@ -25,6 +26,7 @@ public class LogsFragment extends Fragment {
     @BindView(R.id.fabRefresh) protected FloatingActionButton fabRefresh;
     private LogHelper logHelper;
     private AnimatedVectorDrawableCompat rotationAnim;
+    private Unbinder unbinder;
 
     public LogsFragment() {
         // Required empty public constructor
@@ -41,7 +43,7 @@ public class LogsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_logs, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         tvLog.setText(logHelper.readLog());
         rotationAnim = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.arrows_vector_animate);
@@ -62,6 +64,11 @@ public class LogsFragment extends Fragment {
 
     @OnClick(R.id.fabRefresh) protected void clickFab(){
         refreshLog();
+    }
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     // TODO: 11/25/2017 This need move to AsyncTask

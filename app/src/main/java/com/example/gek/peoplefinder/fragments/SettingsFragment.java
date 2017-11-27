@@ -23,6 +23,7 @@ import com.example.gek.peoplefinder.helpers.LogHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class SettingsFragment extends Fragment {
 
@@ -36,12 +37,13 @@ public class SettingsFragment extends Fragment {
     @BindView(R.id.switchServiceEnable) protected SwitchCompat switchServiceEnable;
 
     private LogHelper logHelper;
+    private Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         logHelper = new LogHelper(getActivity().getBaseContext());
 
@@ -92,15 +94,20 @@ public class SettingsFragment extends Fragment {
                 logHelper.writeLog("Set delay to " + frequency + " seconds");
             }
         });
+
+        // Show last settings
         updateLabelFrequency(Connection.getInstance().getFrequencyLocationUpdate());
         sbRate.setProgress((Connection.getInstance().getFrequencyLocationUpdate()/1000)/Const.BASE_STEP_FREQUENCY - 1);
         switchOldPerson.setChecked(Connection.getInstance().isShowOldPersons());
-
         switchServiceEnable.setChecked(Connection.getInstance().isServiceRunning());
 
         return rootView;
     }
 
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 
     @OnClick(R.id.rbGps) protected void onClickGps(){
         Connection.getInstance().setLocationProvider(Const.PROVIDER_GPS);

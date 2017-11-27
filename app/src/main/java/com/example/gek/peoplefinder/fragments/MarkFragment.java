@@ -22,6 +22,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -31,6 +32,7 @@ public class MarkFragment extends Fragment {
     private static final String TAG = "F_MARK";
 
     private String incorrectValue = "Incorrect value";
+    private Unbinder unbinder;
 
     @BindView(R.id.etMarkName)  protected EditText etMarkName;
     @BindView(R.id.etLat)  protected EditText etLat;
@@ -49,7 +51,7 @@ public class MarkFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_mark, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -82,6 +84,11 @@ public class MarkFragment extends Fragment {
         if ( validateLatLng() && validateName() ){
             saveMark();
         }
+    }
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     private void saveMark(){

@@ -8,14 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.helpers.Connection;
-import com.example.gek.peoplefinder.helpers.LogHelper;
 import com.example.gek.peoplefinder.helpers.Utils;
 import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.model.LatLng;
@@ -26,20 +23,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
 
 public class MarkFragment extends Fragment {
+    private static final String TAG = "F_MARK";
 
     private String incorrectValue = "Incorrect value";
 
     @BindView(R.id.etMarkName)  protected EditText etMarkName;
     @BindView(R.id.etLat)  protected EditText etLat;
     @BindView(R.id.etLng)  protected EditText etLng;
-    @BindView(R.id.btnAddMark)  protected Button btnAddMark;
-    @BindView(R.id.rbManualLocation) protected RadioButton rbManualLocation;
     @BindView(R.id.tilName) protected TextInputLayout tilName;
     @BindView(R.id.tilLat) protected TextInputLayout tilLat;
     @BindView(R.id.tilLng) protected TextInputLayout tilLng;
@@ -104,7 +99,6 @@ public class MarkFragment extends Fragment {
         mark.setLongitude(Double.parseDouble(etLng.getText().toString()));
         mark.setDate(new Date());
 
-
         realm.beginTransaction();
         realm.insertOrUpdate(mark);
         realm.commitTransaction();
@@ -151,7 +145,7 @@ public class MarkFragment extends Fragment {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Mark> marks = realm.where(Mark.class).findAll();
         for (Mark mark : marks) {
-            Log.d("11111", "printDb: " + mark.getName());
+            Log.d(TAG, "printDb: " + mark.getName());
         }
         realm.close();
     }

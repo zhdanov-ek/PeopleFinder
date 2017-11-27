@@ -20,44 +20,43 @@ import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.LogHelper;
 
-public class SettingsFragment extends Fragment implements View.OnClickListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class SettingsFragment extends Fragment {
 
     public static final String TAG = "F_SETTINGS";
-    private SeekBar sbRate;
-    private TextView tvStateRate;
-    private SwitchCompat switchOldPerson;
-    private SwitchCompat switchServiceEnable;
-    private LogHelper logHelper;
-    private RadioButton rbNetwork, rbGps;
 
+    @BindView(R.id.rbGps) protected RadioButton rbGps;
+    @BindView(R.id.rbNetwork) protected RadioButton rbNetwork;
+    @BindView(R.id.tvStateRate) protected TextView tvStateRate;
+    @BindView(R.id.sbRate) protected SeekBar sbRate;
+    @BindView(R.id.switchOldPerson) protected SwitchCompat switchOldPerson;
+    @BindView(R.id.switchServiceEnable) protected SwitchCompat switchServiceEnable;
+
+    private LogHelper logHelper;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
+        ButterKnife.bind(this, rootView);
 
         logHelper = new LogHelper(getActivity().getBaseContext());
 
-        rbGps = (RadioButton) rootView.findViewById(R.id.rbGps);
-        rbGps.setOnClickListener(this);
-        rbNetwork = (RadioButton) rootView.findViewById(R.id.rbNetwork);
-        rbNetwork.setOnClickListener(this);
         if (Connection.getInstance().getLocationProvider() == Const.PROVIDER_GPS){
             rbGps.setChecked(true);
         } else {
             rbNetwork.setChecked(true);
         }
 
-        tvStateRate = (TextView) rootView.findViewById(R.id.tvStateRate);
-        sbRate = (SeekBar) rootView.findViewById(R.id.sbRate);
-        switchOldPerson = (SwitchCompat) rootView.findViewById(R.id.switchOldPerson);
         switchOldPerson.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Connection.getInstance().setShowOldPersons(isChecked);
             }
         });
-        switchServiceEnable = (SwitchCompat) rootView.findViewById(R.id.switchServiceEnable);
         switchServiceEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -102,20 +101,17 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         return rootView;
     }
 
+
+    @OnClick(R.id.rbGps) protected void onClickGps(){
+        Connection.getInstance().setLocationProvider(Const.PROVIDER_GPS);
+    }
+
+    @OnClick(R.id.rbNetwork) protected void onClickNetwork(){
+        Connection.getInstance().setLocationProvider(Const.PROVIDER_NETWORK);
+    }
+
     private void updateLabelFrequency(int frequency){
         tvStateRate.setText(String.format(getResources().
                 getString(R.string.settings_rate_location), Integer.toString(frequency)));
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.rbGps:
-                Connection.getInstance().setLocationProvider(Const.PROVIDER_GPS);
-                break;
-            case R.id.rbNetwork:
-                Connection.getInstance().setLocationProvider(Const.PROVIDER_NETWORK);
-                break;
-        }
     }
 }

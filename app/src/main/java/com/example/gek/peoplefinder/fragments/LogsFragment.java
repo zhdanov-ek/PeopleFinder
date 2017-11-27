@@ -10,16 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.LogHelper;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class LogsFragment extends Fragment {
 
-    private TextView tvLog;
-    private FloatingActionButton fabRefresh;
+    @BindView(R.id.tvLog) protected TextView tvLog;
+    @BindView(R.id.fabRefresh) protected FloatingActionButton fabRefresh;
     private LogHelper logHelper;
     private AnimatedVectorDrawableCompat rotationAnim;
 
@@ -38,21 +41,11 @@ public class LogsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_logs, container, false);
+        ButterKnife.bind(this, rootView);
 
-        tvLog = (TextView) rootView.findViewById(R.id.tvLog);
         tvLog.setText(logHelper.readLog());
-
         rotationAnim = AnimatedVectorDrawableCompat.create(getActivity(), R.drawable.arrows_vector_animate);
-
-        fabRefresh = (FloatingActionButton) rootView.findViewById(R.id.fabRefresh);
         fabRefresh.setImageDrawable(rotationAnim);
-        fabRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickFab();
-            }
-        });
-
 
         return rootView;
     }
@@ -67,8 +60,12 @@ public class LogsFragment extends Fragment {
         }
     }
 
+    @OnClick(R.id.fabRefresh) protected void clickFab(){
+        refreshLog();
+    }
+
     // TODO: 11/25/2017 This need move to AsyncTask
-    private void clickFab(){
+    private void refreshLog(){
         fabRefresh.setClickable(false);
         rotationAnim.start();
         String log = logHelper.readLog();
@@ -77,4 +74,5 @@ public class LogsFragment extends Fragment {
         }
         fabRefresh.setClickable(true);
     }
+
 }

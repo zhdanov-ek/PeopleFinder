@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:hint="mark name"
+            android:maxLines="1"
             android:maxLength="10" />
     </android.support.design.widget.TextInputLayout>
 

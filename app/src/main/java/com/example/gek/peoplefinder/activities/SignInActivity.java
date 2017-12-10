@@ -176,7 +176,6 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
 
     private void loginComplete(SyncUser user) {
         UserManager.setActiveUser(user);
-        createInitialDataIfNeeded();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
@@ -263,33 +262,6 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
                 errorMsg = error.toString();
         }
         Toast.makeText(SignInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-    }
-
-    private static void createInitialDataIfNeeded() {
-        final Realm realm = Realm.getDefaultInstance();
-        //noinspection TryFinallyCanBeTryWithResources
-        try {
-            if (realm.where(Mark.class).count() != 0) {
-                return;
-            }
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    if (realm.where(Mark.class).count() == 0) {
-                       realm.executeTransactionAsync(new Realm.Transaction() {
-                           @Override
-                           public void execute(Realm realm) {
-                               realm.insertOrUpdate(new Mark(0, "Market", 49.441436, 32.065216, new Date()));
-                               realm.insertOrUpdate(new Mark(1, "Bridge", 49.478453, 32.038448, new Date()));
-                           }
-                       });
-
-                    }
-                }
-            });
-        } finally {
-            realm.close();
-        }
     }
 
 

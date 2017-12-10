@@ -4,7 +4,6 @@ package com.example.gek.peoplefinder.fragments;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +14,13 @@ import android.widget.Toast;
 
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.helpers.Connection;
-import com.example.gek.peoplefinder.helpers.LogHelper;
+import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.Utils;
-import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.Realm;
-import io.realm.RealmList;
-import io.realm.RealmResults;
-import io.realm.Sort;
 
 
 public class MarkFragment extends Fragment {
@@ -91,32 +83,15 @@ public class MarkFragment extends Fragment {
     }
 
     private void saveMark(){
-        Realm realm = Realm.getDefaultInstance();
-        int newId = 0;
-        RealmResults<Mark> allMarks = realm.where(Mark.class).findAllSorted("id", Sort.DESCENDING);
-        if (allMarks.size() > 0) {
-            newId = allMarks.first().getId() + 1;
-        }
-
-        final Mark mark = new Mark();
-        mark.setId(newId);
-        mark.setName(etMarkName.getText().toString());
-        mark.setLatitude(Double.parseDouble(etLat.getText().toString()));
-        mark.setLongitude(Double.parseDouble(etLng.getText().toString()));
-        mark.setDate(new Date());
-
-        realm.beginTransaction();
-        realm.insertOrUpdate(mark);
-        realm.commitTransaction();
-        realm.close();
+        Db.addMark(etMarkName.getText().toString(), Double.parseDouble(etLat.getText().toString()),
+                Double.parseDouble(etLng.getText().toString()));
 
         etMarkName.setText("");
         etLng.setText("");
-        etLng.setText("");
+        etLat.setText("");
+        etMarkName.requestFocus();
         rbManualLocation.setChecked(true);
         Toast.makeText(getContext(), "Saved...", Toast.LENGTH_SHORT).show();
-
-        printDb();
     }
 
     private boolean validateLatLng(){
@@ -151,14 +126,5 @@ public class MarkFragment extends Fragment {
         tilName.setError(null);
         tilLat.setError(null);
         tilLng.setError(null);
-    }
-
-    private void printDb(){
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Mark> marks = realm.where(Mark.class).findAll();
-        for (Mark mark : marks) {
-            Log.d(TAG, "printDb: " + mark.getName());
-        }
-        realm.close();
     }
 }

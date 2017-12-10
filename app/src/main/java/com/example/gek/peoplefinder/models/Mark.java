@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey;
 public class Mark extends RealmObject{
 
     @PrimaryKey
-    private int id;
+    private String id;
     private String name;
     private double latitude;
     private double longitude;
@@ -17,7 +17,7 @@ public class Mark extends RealmObject{
     public Mark() {
     }
 
-    public Mark(int id, String name, double latitude, double longitude, Date date) {
+    public Mark(String id, String name, double latitude, double longitude, Date date) {
         this.id = id;;
         this.name = name;
         this.latitude = latitude;
@@ -25,10 +25,10 @@ public class Mark extends RealmObject{
         this.date = date;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

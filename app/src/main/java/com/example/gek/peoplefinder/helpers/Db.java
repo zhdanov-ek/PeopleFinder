@@ -8,7 +8,6 @@ import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import io.realm.Sort;
 
 /**
  * DB helper
@@ -18,17 +17,17 @@ public class Db {
     private static final String TAG = "H_DB";
 
 
-    public static void addMark(String name, double latitude, double longitude){
+    public static void addMark(String name, double latitude, double longitude, boolean isUserLocation){
         Realm realm = Realm.getDefaultInstance();
 
-        int newId = 0;
-        RealmResults<Mark> allMarks = realm.where(Mark.class).findAllSorted("id", Sort.DESCENDING);
-        if (allMarks.size() > 0) {
-            newId = allMarks.first().getId() + 1;
-        }
-
         final Mark mark = new Mark();
-        mark.setId(newId);
+        String id;
+        if (isUserLocation){
+            id = Connection.getInstance().getUserName() + Connection.getInstance().getUserEmail();
+        } else {
+            id = name;
+        }
+        mark.setId(id);
         mark.setName(name);
         mark.setLatitude(latitude);
         mark.setLongitude(longitude);

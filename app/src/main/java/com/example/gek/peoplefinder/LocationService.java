@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.gek.peoplefinder.activities.MainActivity;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
+import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.LogHelper;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -48,7 +49,8 @@ public class LocationService extends Service {
             if (location != null) {
                 Connection.getInstance().setLastLocation(
                         new LatLng(location.getLatitude(), location.getLongitude()));
-//                writePositionToDb(location.getLatitude(), location.getLongitude());
+                Db.addMark(Connection.getInstance().getUserName(),
+                        location.getLatitude(), location.getLongitude(), true);
                 String msg = new StringBuilder()
                         .append(location.getLatitude())
                         .append(" : ")

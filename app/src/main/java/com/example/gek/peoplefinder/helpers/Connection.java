@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class Connection {
     private static Connection instance;
     private String userName;
+    private String userEmail;
     private LatLng lastLocation;
     private Boolean isServiceRunning;
     private Boolean isShowOldPersons;
@@ -29,6 +30,7 @@ public class Connection {
         isShowOldPersons = SettingsHelper.isNeedShowOldPersons();
         frequencyLocationUpdate = SettingsHelper.getFrequencyOfUpdate();
         userName = SettingsHelper.getUserName();
+        userEmail = SettingsHelper.getUserEmail();
         locationProvider = SettingsHelper.getLocationProvider();
     }
 
@@ -45,6 +47,13 @@ public class Connection {
     }
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public LatLng getLastLocation() {

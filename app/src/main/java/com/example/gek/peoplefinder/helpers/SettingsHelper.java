@@ -18,6 +18,8 @@ public class SettingsHelper {
     private static final String PARAM_SHOW_OLD_PERSONS = "old_persons";
     private static final String PARAM_PROVIDER = "provider";
 
+    private static final String PARAM_MAP_ZOOM = "map_zoom";
+
     private static SharedPreferences mPref;
 
     private SettingsHelper(){
@@ -46,6 +48,12 @@ public class SettingsHelper {
     private static void updatePref(String key, int value){
         SharedPreferences.Editor edit = mPref.edit();
         edit.putInt(key, value);
+        edit.apply();
+    }
+
+    private static void updatePref(String key, float value){
+        SharedPreferences.Editor edit = mPref.edit();
+        edit.putFloat(key, value);
         edit.apply();
     }
 
@@ -93,6 +101,11 @@ public class SettingsHelper {
         return mPref.getInt(PARAM_PROVIDER, Const.PROVIDER_NETWORK);
     }
 
-
+    public static void setMapZoom(float zoom){
+        updatePref(PARAM_MAP_ZOOM, zoom);
+    }
+    public static float getMapZoom(){
+        return mPref.getFloat(PARAM_MAP_ZOOM, Const.ZOOM_MAP);
+    }
 
 }

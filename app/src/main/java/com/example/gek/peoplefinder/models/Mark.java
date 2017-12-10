@@ -17,7 +17,8 @@ public class Mark extends RealmObject{
     public Mark() {
     }
 
-    public Mark(String name, double latitude, double longitude, Date date) {
+    public Mark(int id, String name, double latitude, double longitude, Date date) {
+        this.id = id;;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;

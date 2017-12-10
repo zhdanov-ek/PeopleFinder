@@ -32,6 +32,7 @@ import io.realm.Sort;
 
 
 public class MarkFragment extends Fragment {
+    private static final String TAG = "F_MARK";
 
     private String incorrectValue = "Incorrect value";
 
@@ -104,11 +105,16 @@ public class MarkFragment extends Fragment {
         mark.setLongitude(Double.parseDouble(etLng.getText().toString()));
         mark.setDate(new Date());
 
-
         realm.beginTransaction();
         realm.insertOrUpdate(mark);
         realm.commitTransaction();
         realm.close();
+
+        etMarkName.setText("");
+        etLng.setText("");
+        etLng.setText("");
+        rbManualLocation.setChecked(true);
+        Toast.makeText(getContext(), "Saved...", Toast.LENGTH_SHORT).show();
 
         printDb();
     }
@@ -151,7 +157,7 @@ public class MarkFragment extends Fragment {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Mark> marks = realm.where(Mark.class).findAll();
         for (Mark mark : marks) {
-            Log.d("11111", "printDb: " + mark.getName());
+            Log.d(TAG, "printDb: " + mark.getName());
         }
         realm.close();
     }

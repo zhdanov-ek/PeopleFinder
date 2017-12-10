@@ -3,7 +3,6 @@ package com.example.gek.peoplefinder.fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,10 +15,10 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.gek.peoplefinder.R;
+import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
+import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.example.gek.peoplefinder.models.Mark;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,31 +30,43 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
 public class MapFragment extends Fragment implements
         OnMapReadyCallback {
     
     private static final String TAG = "F_MAP";
+
+    private Realm mRealm;
     private GoogleMap mMap;
     private SupportMapFragment mMapFragment;
 
-    private float mZoomMap = Const.ZOOM_MAP;
-    private LatLng mMyLocation;
-    private ArrayList<Mark> mListMarks;
-    private Boolean mIsAllReady = false;
+    private float mMapZoom;
+    private List<Mark> mListMarks;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
 
-        mMyLocation = new LatLng(49.451558, 32.044757);
-        mListMarks = new ArrayList<>();
-        mListMarks.add(new Mark("Market", 49.441436, 32.065216, new Date()));
-        mListMarks.add(new Mark("Bridge", 49.478453, 32.038448, new Date()));
+        mMapZoom = SettingsHelper.getMapZoom();
+        mRealm = Realm.getDefaultInstance();
+        final RealmResults<Mark> marks = mRealm.where(Mark.class).findAllAsync();
+        marks.addChangeListener(changeListener);
     }
+
+    private final RealmChangeListener<RealmResults<Mark>> changeListener = new RealmChangeListener<RealmResults<Mark>>() {
+        @Override
+        public void onChange(RealmResults<Mark> elements) {
+            mListMarks = elements;
+            updateUi();
+        }
+    };
+
 
     @Nullable
     @Override
@@ -78,10 +89,18 @@ public class MapFragment extends Fragment implements
 //        mMap.setOnMapClickListener(this);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SettingsHelper.setMapZoom(mMap.getCameraPosition().zoom);
+        if (mRealm != null){
+            mRealm.close();
+        }
+    }
+
     private void updateUi() {
         int sizeIconPx = 100;
         RequestOptions options = new RequestOptions().circleCrop().override(sizeIconPx);
-
 
         if ((mMap != null) && (mListMarks != null)){
             mMap.clear();
@@ -91,7 +110,7 @@ public class MapFragment extends Fragment implements
                 try {
                     path = new URL("https://defcon.ru/wp-content/uploads/2015/12/ico_android-3.png");
                 } catch (MalformedURLException e) {
-                    Log.d("333333333333", "updateUi: ");
+                    Log.d(TAG, "Parsing URL with image of profile is failed");
                 }
 
                 Glide.with(this)
@@ -111,13 +130,13 @@ public class MapFragment extends Fragment implements
 
             // save current zoom of camera and set normal zoom if first show the map
             if (mMap.getCameraPosition().zoom > Const.ZOOM_MAP){
-                mZoomMap = mMap.getCameraPosition().zoom;
+                mMapZoom = mMap.getCameraPosition().zoom;
             } else {
-                if (mZoomMap < mMap.getCameraPosition().zoom){
-                    mZoomMap = Const.ZOOM_MAP;
+                if (mMapZoom < mMap.getCameraPosition().zoom){
+                    mMapZoom = Const.ZOOM_MAP;
                 }
-                if (mMyLocation != null){
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mMyLocation, mZoomMap);
+                if (Connection.getInstance().getLastLocation() != null){
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(Connection.getInstance().getLastLocation(), mMapZoom);
                     mMap.moveCamera(cameraUpdate);
                 }
             }
@@ -125,9 +144,7 @@ public class MapFragment extends Fragment implements
     }
 
 
-
     private void setMapSettings() {
-        mIsAllReady = true;
 //                mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -137,6 +154,8 @@ public class MapFragment extends Fragment implements
         updateUi();
         // TODO: 19.11.2017 Start service for receive Location
     }
+
+
 
 
 

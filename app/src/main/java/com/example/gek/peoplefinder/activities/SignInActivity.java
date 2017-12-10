@@ -23,6 +23,7 @@ import com.example.gek.peoplefinder.auth.FacebookAuth;
 import com.example.gek.peoplefinder.auth.GoogleAuth;
 import com.example.gek.peoplefinder.auth.UserManager;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
+import com.example.gek.peoplefinder.models.Mark;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
@@ -34,7 +35,10 @@ import com.google.android.gms.common.SignInButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 import io.realm.ObjectServerError;
+import io.realm.Realm;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
@@ -262,27 +266,30 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
     }
 
     private static void createInitialDataIfNeeded() {
-//        final Realm realm = Realm.getDefaultInstance();
-//        //noinspection TryFinallyCanBeTryWithResources
-//        try {
-//            if (realm.where(TaskListList.class).count() != 0) {
-//                return;
-//            }
-//            realm.executeTransaction(new Realm.Transaction() {
-//                @Override
-//                public void execute(Realm realm) {
-//                    if (realm.where(TaskListList.class).count() == 0) {
-//                        final TaskListList taskListList = realm.createObject(TaskListList.class, 0);
-//                        final TaskList taskList = new TaskList();
-//                        taskList.setId(PeopleFinderApplication.DEFAULT_LIST_ID);
-//                        taskList.setText(PeopleFinderApplication.DEFAULT_LIST_NAME);
-//                        taskListList.getItems().add(taskList);
-//                    }
-//                }
-//            });
-//        } finally {
-//            realm.close();
-//        }
+        final Realm realm = Realm.getDefaultInstance();
+        //noinspection TryFinallyCanBeTryWithResources
+        try {
+            if (realm.where(Mark.class).count() != 0) {
+                return;
+            }
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    if (realm.where(Mark.class).count() == 0) {
+                       realm.executeTransactionAsync(new Realm.Transaction() {
+                           @Override
+                           public void execute(Realm realm) {
+                               realm.insertOrUpdate(new Mark(0, "Market", 49.441436, 32.065216, new Date()));
+                               realm.insertOrUpdate(new Mark(1, "Bridge", 49.478453, 32.038448, new Date()));
+                           }
+                       });
+
+                    }
+                }
+            });
+        } finally {
+            realm.close();
+        }
     }
 
 

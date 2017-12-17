@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,6 +42,7 @@ import com.google.android.gms.location.LocationServices;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity  implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity  implements
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.drawerLayout) protected DrawerLayout drawerLayout;
+    @BindView(R.id.lockPermissions) protected View lockPermissions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +80,6 @@ public class MainActivity extends AppCompatActivity  implements
         if (checkLocationPermission(Const.RC_INIT_LOCATION)){
             mGoogleApiClient.connect();
         }
-        showMapFragment();
     }
 
 
@@ -164,13 +166,10 @@ public class MainActivity extends AppCompatActivity  implements
                 case Const.RC_INIT_LOCATION:
                     mGoogleApiClient.connect();
                     break;
-                case Const.RC_OPEN_MAP:
-                    showMapFragment();
-                    break;
-                case Const.RC_START_SERVICE:
-                    // TODO: 11/23/2017 start service
-                    break;
             }
+        } else {
+            lockPermissions.setVisibility(View.VISIBLE);
+            setEnableDrawerMenu(false);
         }
     }
 
@@ -260,11 +259,13 @@ public class MainActivity extends AppCompatActivity  implements
     }
 
     private void showMapFragment(){
-        if (checkLocationPermission(Const.RC_OPEN_MAP)){
+        if (checkLocationPermission(Const.RC_INIT_LOCATION)) {
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             ft.replace(R.id.container, new MapFragment(), null);
             ft.addToBackStack(null);
             ft.commit();
+            lockPermissions.setVisibility(View.GONE);
+            setEnableDrawerMenu(true);
         }
     }
 
@@ -296,13 +297,18 @@ public class MainActivity extends AppCompatActivity  implements
             ft.addToBackStack(null);
             ft.commit();
         }
+    }
 
+    private void setEnableDrawerMenu(boolean isEnable){
+        if (mNavigationView != null){
+            mNavigationView.getMenu().setGroupVisible(R.id.nav_main_group, isEnable);
+        }
     }
 
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        showMapFragment();
     }
 
     @Override
@@ -312,5 +318,9 @@ public class MainActivity extends AppCompatActivity  implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         mGoogleApiClient.reconnect();
+    }
+
+    @OnClick(R.id.btnGrant) protected void onClickGrant(){
+        checkLocationPermission(Const.RC_INIT_LOCATION);
     }
 }

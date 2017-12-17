@@ -10,6 +10,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="main_permissions_explanation">You must grant permission on Location. Without it application does not have a sense.</string>
+    <string name="grant_permissions">Grant permissions</string>
 
     <string name="prompt_username">User Name</string>
     <string name="prompt_password">Password</string>

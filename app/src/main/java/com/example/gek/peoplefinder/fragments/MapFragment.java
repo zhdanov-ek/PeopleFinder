@@ -56,6 +56,7 @@ public class MapFragment extends BaseFragment implements
         mMapZoom = SettingsHelper.getMapZoom();
         mRealm = Realm.getDefaultInstance();
         final RealmResults<Mark> marks = mRealm.where(Mark.class).findAllAsync();
+        mListMarks = marks;
         marks.addChangeListener(changeListener);
     }
 
@@ -170,9 +171,4 @@ public class MapFragment extends BaseFragment implements
         updateUi();
         // TODO: 19.11.2017 Start service for receive Location
     }
-
-
-
-
-
 }

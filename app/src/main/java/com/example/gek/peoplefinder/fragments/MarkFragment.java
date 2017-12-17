@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -21,18 +20,19 @@ import com.google.android.gms.maps.model.LatLng;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 
 public class MarkFragment extends Fragment {
     private static final String TAG = "F_MARK";
 
     private String incorrectValue = "Incorrect value";
+    private Unbinder unbinder;
 
+    @BindView(R.id.rbManualLocation) protected RadioButton rbManualLocation;
     @BindView(R.id.etMarkName)  protected EditText etMarkName;
     @BindView(R.id.etLat)  protected EditText etLat;
     @BindView(R.id.etLng)  protected EditText etLng;
-    @BindView(R.id.btnAddMark)  protected Button btnAddMark;
-    @BindView(R.id.rbManualLocation) protected RadioButton rbManualLocation;
     @BindView(R.id.tilName) protected TextInputLayout tilName;
     @BindView(R.id.tilLat) protected TextInputLayout tilLat;
     @BindView(R.id.tilLng) protected TextInputLayout tilLng;
@@ -47,7 +47,7 @@ public class MarkFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_mark, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -80,6 +80,11 @@ public class MarkFragment extends Fragment {
         if ( validateLatLng() && validateName() ){
             saveMark();
         }
+    }
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     private void saveMark(){

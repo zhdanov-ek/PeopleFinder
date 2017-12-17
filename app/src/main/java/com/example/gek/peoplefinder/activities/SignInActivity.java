@@ -6,12 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +20,6 @@ import com.example.gek.peoplefinder.auth.FacebookAuth;
 import com.example.gek.peoplefinder.auth.GoogleAuth;
 import com.example.gek.peoplefinder.auth.UserManager;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
-import com.example.gek.peoplefinder.models.Mark;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
@@ -35,10 +31,10 @@ import com.google.android.gms.common.SignInButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.realm.ObjectServerError;
-import io.realm.Realm;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
@@ -50,22 +46,21 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
     public static final String ACTION_IGNORE_CURRENT_USER = "action.ignoreCurrentUser";
     private static final int RC_SIGN_IN = 10;
 
-    private EditText etUserName;
-    private EditText etPassword;
-    private View progressView;
-    private View loginFormView;
+    @BindView(R.id.etUserName) protected EditText etUserName;
+    @BindView(R.id.etPassword) protected EditText etPassword;
+    @BindView(R.id.progressView) protected View progressView;
+    @BindView(R.id.loginFormView) protected View loginFormView;
+
     private FacebookAuth facebookAuth;
     private GoogleAuth googleAuth;
-    private Button btnSignIn, btnRegister;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        ButterKnife.bind(this);
 
-        etUserName = (EditText) findViewById(R.id.etUserName);
-        etPassword = (EditText) findViewById(R.id.etPassword);
         etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -77,24 +72,6 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
             }
         });
 
-        btnRegister = (Button) findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SignInActivity.this, RegisterActivity.class));
-            }
-        });
-
-        btnSignIn = (Button) findViewById(R.id.btnSignIn);
-        btnSignIn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-
-        loginFormView = findViewById(R.id.sign_in_form);
-        progressView = findViewById(R.id.sign_in_progress);
 
         // Check if we already got a user, if yes, just continue automatically
         if (savedInstanceState == null) {
@@ -166,6 +143,15 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         };
     }
 
+
+
+    @OnClick(R.id.btnRegister) protected void clickOnRegister(){
+        startActivity(new Intent(SignInActivity.this, RegisterActivity.class));
+    }
+
+    @OnClick(R.id.btnSignIn) protected void clickOnSignIn(){
+        attemptLogin();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

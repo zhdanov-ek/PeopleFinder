@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.gek.peoplefinder.R;
+import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
@@ -36,7 +37,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
-public class MapFragment extends Fragment implements
+public class MapFragment extends BaseFragment implements
         OnMapReadyCallback {
     
     private static final String TAG = "F_MAP";
@@ -77,6 +78,12 @@ public class MapFragment extends Fragment implements
     }
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mCallbackDrawerMenuStateChanger.setMenuState(StateMenu.MAP);
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -92,7 +99,7 @@ public class MapFragment extends Fragment implements
     public void onDestroyView() {
         super.onDestroyView();
         // Need remove child fragment with map for correct work with BackStack
-        if (mMapFragment != null){
+        if (!getActivity().isFinishing() && (mMapFragment != null)){
             getFragmentManager().beginTransaction().remove(mMapFragment).commit();
         }
     }

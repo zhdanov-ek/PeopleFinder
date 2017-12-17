@@ -5,13 +5,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.gek.peoplefinder.R;
+import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.LogHelper;
 
@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-public class LogsFragment extends Fragment {
+public class LogsFragment extends BaseFragment {
 
     @BindView(R.id.tvLog) protected TextView tvLog;
     @BindView(R.id.fabRefresh) protected FloatingActionButton fabRefresh;
@@ -50,6 +50,12 @@ public class LogsFragment extends Fragment {
         fabRefresh.setImageDrawable(rotationAnim);
 
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mCallbackDrawerMenuStateChanger.setMenuState(StateMenu.LOGS);
     }
 
     @Override

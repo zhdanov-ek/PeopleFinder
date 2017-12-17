@@ -12,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.gek.peoplefinder.R;
+import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.Utils;
@@ -23,7 +24,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 
-public class MarkFragment extends Fragment {
+public class MarkFragment extends BaseFragment {
     private static final String TAG = "F_MARK";
 
     private String incorrectValue = "Incorrect value";
@@ -50,6 +51,13 @@ public class MarkFragment extends Fragment {
         unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mCallbackDrawerMenuStateChanger.setMenuState(StateMenu.MARK);
     }
 
     @OnClick({R.id.rbCurrentLocation, R.id.rbManualLocation}) protected void clickChangeTypeMark(View view){

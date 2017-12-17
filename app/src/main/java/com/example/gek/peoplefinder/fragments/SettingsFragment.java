@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.gek.peoplefinder.LocationService;
 import com.example.gek.peoplefinder.R;
+import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.LogHelper;
@@ -25,7 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends BaseFragment {
 
     public static final String TAG = "F_SETTINGS";
 
@@ -102,6 +103,13 @@ public class SettingsFragment extends Fragment {
         switchServiceEnable.setChecked(Connection.getInstance().isServiceRunning());
 
         return rootView;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mCallbackDrawerMenuStateChanger.setMenuState(StateMenu.SETTINGS);
     }
 
     @Override public void onDestroyView() {

@@ -26,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.gek.peoplefinder.LocationService;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.auth.UserManager;
+import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.fragments.LogsFragment;
 import com.example.gek.peoplefinder.fragments.MapFragment;
 import com.example.gek.peoplefinder.fragments.MarkFragment;
@@ -33,6 +34,7 @@ import com.example.gek.peoplefinder.fragments.SettingsFragment;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
+import com.example.gek.peoplefinder.interfaces.DrawerMenuStateChanger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -42,13 +44,18 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity  implements
         NavigationView.OnNavigationItemSelectedListener,
+        DrawerMenuStateChanger,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "A_MAIN";
+
     private boolean logoutAfterClose;
     private FragmentManager mFragmentManager;
     private GoogleApiClient mGoogleApiClient;
+    private NavigationView mNavigationView;
+    private StateMenu mStateMenu;
+
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.drawerLayout) protected DrawerLayout drawerLayout;
@@ -70,9 +77,30 @@ public class MainActivity extends AppCompatActivity  implements
         if (checkLocationPermission(Const.RC_INIT_LOCATION)){
             mGoogleApiClient.connect();
         }
+        showMapFragment();
     }
 
 
+    @Override
+    public void setMenuState(StateMenu state) {
+        mStateMenu = state;
+        if (mNavigationView != null){
+            switch (state){
+                case MAP:
+                    mNavigationView.setCheckedItem(R.id.nav_map);
+                    break;
+                case MARK:
+                    mNavigationView.setCheckedItem(R.id.nav_mark);
+                    break;
+                case LOGS:
+                    mNavigationView.setCheckedItem(R.id.nav_logs);
+                    break;
+                case SETTINGS:
+                    mNavigationView.setCheckedItem(R.id.nav_settings);
+                    break;
+            }
+        }
+    }
 
     private void initDrawer(){
         setSupportActionBar(toolbar);
@@ -81,11 +109,11 @@ public class MainActivity extends AppCompatActivity  implements
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
 
-        ((TextView)navigationView.getHeaderView(0).findViewById(R.id.tvName)).setText(SettingsHelper.getUserName());
-        ImageView ivProfileImage = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivProfileImage);
+        ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.tvName)).setText(SettingsHelper.getUserName());
+        ImageView ivProfileImage = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.ivProfileImage);
         String urlImage = SettingsHelper.getUserProfileImageUrl();
         RequestOptions options = new RequestOptions()
                 .circleCrop()
@@ -104,7 +132,11 @@ public class MainActivity extends AppCompatActivity  implements
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (mStateMenu == StateMenu.MAP){
+                finish();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -133,8 +165,7 @@ public class MainActivity extends AppCompatActivity  implements
                     mGoogleApiClient.connect();
                     break;
                 case Const.RC_OPEN_MAP:
-                    Log.d(TAG, "onRequestPermissionsResult: granted");
-//                    showMapFragment();
+                    showMapFragment();
                     break;
                 case Const.RC_START_SERVICE:
                     // TODO: 11/23/2017 start service
@@ -164,7 +195,7 @@ public class MainActivity extends AppCompatActivity  implements
 
         switch (id){
             case R.id.nav_map:
-                showMapFragment();
+                clearBackStack();
                 break;
 
             case R.id.nav_mark:
@@ -222,14 +253,11 @@ public class MainActivity extends AppCompatActivity  implements
         super.onStop();
     }
 
-//    private void clearBackStack(){
-//        Log.d(TAG, "clearBackStack: entry count before = " + mFragmentManager.getBackStackEntryCount());
-//        for (int i = 1; i < mFragmentManager.getBackStackEntryCount(); ++i) {
-//            mFragmentManager.popBackStack();
-//            Log.d(TAG, "clearBackStack: remove one fragment");
-//        }
-//        Log.d(TAG, "clearBackStack: entry count after = " + mFragmentManager.getBackStackEntryCount());
-//    }
+    private void clearBackStack(){
+        for (int i = 1; i < mFragmentManager.getBackStackEntryCount(); ++i) {
+            mFragmentManager.popBackStack();
+        }
+    }
 
     private void showMapFragment(){
         if (checkLocationPermission(Const.RC_OPEN_MAP)){
@@ -241,24 +269,34 @@ public class MainActivity extends AppCompatActivity  implements
     }
 
     private void showLogsFragment(){
-        FragmentTransaction ft = mFragmentManager.beginTransaction();
-        ft.replace(R.id.container, new LogsFragment(), null);
-        ft.addToBackStack(null);
-        ft.commit();
+        if (mStateMenu != StateMenu.LOGS){
+            clearBackStack();
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            ft.replace(R.id.container, new LogsFragment(), null);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
     }
 
     private void showMarkFragment(){
-        FragmentTransaction ft = mFragmentManager.beginTransaction();
-        ft.replace(R.id.container, new MarkFragment(), null);
-        ft.addToBackStack(null);
-        ft.commit();
+        if (mStateMenu != StateMenu.MARK){
+            clearBackStack();
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            ft.replace(R.id.container, new MarkFragment(), null);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
     }
 
     private void showSettingsFragment(){
-        FragmentTransaction ft = mFragmentManager.beginTransaction();
-        ft.replace(R.id.container, new SettingsFragment(), null);
-        ft.addToBackStack(null);
-        ft.commit();
+        if (mStateMenu != StateMenu.SETTINGS){
+            clearBackStack();
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            ft.replace(R.id.container, new SettingsFragment(), null);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+
     }
 
 

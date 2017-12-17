@@ -51,7 +51,6 @@ public class MapFragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
 
         mMapZoom = SettingsHelper.getMapZoom();
         mRealm = Realm.getDefaultInstance();
@@ -71,7 +70,6 @@ public class MapFragment extends Fragment implements
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: ");
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
@@ -89,6 +87,16 @@ public class MapFragment extends Fragment implements
 //        mMap.setOnMapClickListener(this);
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Need remove child fragment with map for correct work with BackStack
+        if (mMapFragment != null){
+            getFragmentManager().beginTransaction().remove(mMapFragment).commit();
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -97,6 +105,7 @@ public class MapFragment extends Fragment implements
             mRealm.close();
         }
     }
+
 
     private void updateUi() {
         int sizeIconPx = 100;

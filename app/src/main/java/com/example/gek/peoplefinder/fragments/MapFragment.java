@@ -4,8 +4,8 @@ package com.example.gek.peoplefinder.fragments;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +23,11 @@ import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -44,9 +46,13 @@ public class MapFragment extends BaseFragment implements
 
     private Realm mRealm;
     private GoogleMap mMap;
-    private SupportMapFragment mMapFragment;
+
+    private MapView mMapView;
 
     private float mMapZoom;
+    private float mMapBearing;
+    private LatLng mCameraPosition;
+    private boolean mIsFirstInitializationCameraPosition = true;
     private List<Mark> mListMarks;
 
     @Override
@@ -54,6 +60,7 @@ public class MapFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
 
         mMapZoom = SettingsHelper.getMapZoom();
+        mMapBearing = SettingsHelper.getMapBearing();
         mRealm = Realm.getDefaultInstance();
         final RealmResults<Mark> marks = mRealm.where(Mark.class).findAllAsync();
         mListMarks = marks;
@@ -72,10 +79,18 @@ public class MapFragment extends BaseFragment implements
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_map, container, false);
-        mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mMapFragment.getMapAsync(this);
-        return v;
+        View rootView = null;
+        try {
+            rootView = inflater.inflate(R.layout.fragment_map, container, false);
+                MapsInitializer.initialize(this.getActivity());
+                mMapView = (MapView) rootView.findViewById(R.id.map);
+                mMapView.onCreate(savedInstanceState);
+                mMapView.getMapAsync(this);
+        }
+        catch (InflateException e){
+            Log.e(TAG, "Inflate exception");
+        }
+        return rootView;
     }
 
 
@@ -84,6 +99,14 @@ public class MapFragment extends BaseFragment implements
         super.onStart();
         mCallbackDrawerMenuStateChanger.setMenuState(StateMenu.MAP);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mIsFirstInitializationCameraPosition = true;
+        mMapView.onResume();
+    }
+
 
 
     @Override
@@ -97,32 +120,56 @@ public class MapFragment extends BaseFragment implements
 
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // Need remove child fragment with map for correct work with BackStack
-        if (!getActivity().isFinishing() && (mMapFragment != null)){
-            getFragmentManager().beginTransaction().remove(mMapFragment).commit();
-        }
+    public void onPause() {
+        super.onPause();
+        stashCameraPosition();
+        mMapView.onPause();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mMapView.onSaveInstanceState(outState);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         SettingsHelper.setMapZoom(mMap.getCameraPosition().zoom);
+        SettingsHelper.setMapBearing(mMap.getCameraPosition().bearing);
         if (mRealm != null){
             mRealm.close();
         }
+        mMapView.onDestroy();
     }
 
 
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mMapView.onLowMemory();
+    }
+
     private void updateUi() {
-        int sizeIconPx = 100;
-        RequestOptions options = new RequestOptions().circleCrop().override(sizeIconPx);
+        stashCameraPosition();
 
         if ((mMap != null) && (mListMarks != null)){
             mMap.clear();
-            for (final Mark mark: mListMarks) {
+            drawMarks();
+            if (mIsFirstInitializationCameraPosition){
+                restoreCameraPosition(Connection.getInstance().getLastLocation());
+                mIsFirstInitializationCameraPosition = false;
+            } else {
+                restoreCameraPosition(mCameraPosition);
+            }
+        }
+    }
 
+    private void drawMarks(){
+        if (Connection.getInstance().isServiceRunning()){
+            int sizeIconPx = 100;
+            RequestOptions options = new RequestOptions().circleCrop().override(sizeIconPx);
+            for (final Mark mark: mListMarks) {
                 URL path = null;
                 try {
                     path = new URL("https://defcon.ru/wp-content/uploads/2015/12/ico_android-3.png");
@@ -144,19 +191,23 @@ public class MapFragment extends BaseFragment implements
                             }
                         });
             }
+        }
+    }
 
-            // save current zoom of camera and set normal zoom if first show the map
-            if (mMap.getCameraPosition().zoom > Const.ZOOM_MAP){
-                mMapZoom = mMap.getCameraPosition().zoom;
-            } else {
-                if (mMapZoom < mMap.getCameraPosition().zoom){
-                    mMapZoom = Const.ZOOM_MAP;
-                }
-                if (Connection.getInstance().getLastLocation() != null){
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(Connection.getInstance().getLastLocation(), mMapZoom);
-                    mMap.moveCamera(cameraUpdate);
-                }
-            }
+    private void stashCameraPosition(){
+        if ((mMap != null) && (mMap.getCameraPosition().zoom > Const.MAP_ZOOM_DEFAULT)){
+            mMapBearing = mMap.getCameraPosition().bearing;
+            mMapZoom = mMap.getCameraPosition().zoom;
+            mCameraPosition = new LatLng(mMap.getCameraPosition().target.latitude,
+                    mMap.getCameraPosition().target.longitude);
+        }
+    }
+
+    private void restoreCameraPosition(LatLng position) {
+        if (position != null) {
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(
+                    new CameraPosition(position, mMapZoom, 0, mMapBearing));
+            mMap.moveCamera(cameraUpdate);
         }
     }
 
@@ -169,6 +220,5 @@ public class MapFragment extends BaseFragment implements
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         updateUi();
-        // TODO: 19.11.2017 Start service for receive Location
     }
 }

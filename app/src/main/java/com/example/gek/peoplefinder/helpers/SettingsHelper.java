@@ -18,9 +18,6 @@ public class SettingsHelper {
     private static final String PARAM_SHOW_OLD_PERSONS = "old_persons";
     private static final String PARAM_PROVIDER = "provider";
 
-    private static final String PARAM_MAP_ZOOM = "map_zoom";
-    private static final String PARAM_MAP_BEARING = "map_bearing";
-
     private static SharedPreferences mPref;
 
     private SettingsHelper(){
@@ -100,20 +97,6 @@ public class SettingsHelper {
     }
     public static int getLocationProvider(){
         return mPref.getInt(PARAM_PROVIDER, Const.PROVIDER_NETWORK);
-    }
-
-    public static void setMapZoom(float zoom){
-        updatePref(PARAM_MAP_ZOOM, zoom);
-    }
-    public static float getMapZoom(){
-        return mPref.getFloat(PARAM_MAP_ZOOM, Const.MAP_ZOOM_DEFAULT);
-    }
-
-    public static void setMapBearing(float bearing){
-        updatePref(PARAM_MAP_BEARING, bearing);
-    }
-    public static float getMapBearing(){
-        return mPref.getFloat(PARAM_MAP_BEARING, Const.MAP_BEARING_DEFAULT);
     }
 
 }

@@ -1,7 +1,6 @@
 package com.example.gek.peoplefinder.fragments;
 
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -10,15 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
-import com.example.gek.peoplefinder.helpers.Const;
-import com.example.gek.peoplefinder.helpers.SettingsHelper;
+import com.example.gek.peoplefinder.helpers.map.MarkRenderer;
 import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,13 +20,13 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import io.realm.Realm;
@@ -40,7 +34,11 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 public class MapFragment extends BaseFragment implements
-        OnMapReadyCallback {
+        OnMapReadyCallback,
+        ClusterManager.OnClusterClickListener<Mark>,
+        ClusterManager.OnClusterInfoWindowClickListener<Mark>,
+        ClusterManager.OnClusterItemClickListener<Mark>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<Mark> {
     
     private static final String TAG = "F_MAP";
 
@@ -49,18 +47,18 @@ public class MapFragment extends BaseFragment implements
 
     private MapView mMapView;
 
-    private float mMapZoom;
+    private float mMapZoom = -1;
     private float mMapBearing;
     private LatLng mCameraPosition;
     private boolean mIsFirstInitializationCameraPosition = true;
     private List<Mark> mListMarks;
 
+    private ClusterManager<Mark> mClusterManager;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMapZoom = SettingsHelper.getMapZoom();
-        mMapBearing = SettingsHelper.getMapBearing();
         mRealm = Realm.getDefaultInstance();
         final RealmResults<Mark> marks = mRealm.where(Mark.class).findAllAsync();
         mListMarks = marks;
@@ -103,19 +101,25 @@ public class MapFragment extends BaseFragment implements
     @Override
     public void onResume() {
         super.onResume();
-        mIsFirstInitializationCameraPosition = true;
         mMapView.onResume();
     }
-
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         setMapSettings();
-//        mMap.setOnInfoWindowClickListener(this);
-//        mMap.setOnMarkerClickListener(this);
-//        mMap.setOnMapClickListener(this);
+        mClusterManager = new ClusterManager<Mark>(getContext(), mMap);
+        mClusterManager.setRenderer(new MarkRenderer(getContext(), mMap, mClusterManager));
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterInfoWindowClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+        restoreCameraPosition();
+        updateUi();
     }
 
 
@@ -135,8 +139,6 @@ public class MapFragment extends BaseFragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        SettingsHelper.setMapZoom(mMap.getCameraPosition().zoom);
-        SettingsHelper.setMapBearing(mMap.getCameraPosition().bearing);
         if (mRealm != null){
             mRealm.close();
         }
@@ -151,51 +153,34 @@ public class MapFragment extends BaseFragment implements
     }
 
     private void updateUi() {
-        stashCameraPosition();
-
         if ((mMap != null) && (mListMarks != null)){
             mMap.clear();
+            mClusterManager.clearItems();
             drawMarks();
             if (mIsFirstInitializationCameraPosition){
-                restoreCameraPosition(Connection.getInstance().getLastLocation());
+                if (mListMarks != null && mListMarks.size() > 0){
+                    LatLngBounds.Builder builder = LatLngBounds.builder();
+                    for (Mark mark : mListMarks) {
+                        builder.include(mark.getLatLng());
+                    }
+                    moveCameraToBounds(builder.build());
+                }
                 mIsFirstInitializationCameraPosition = false;
-            } else {
-                restoreCameraPosition(mCameraPosition);
             }
         }
     }
 
     private void drawMarks(){
         if (Connection.getInstance().isServiceRunning()){
-            int sizeIconPx = 100;
-            RequestOptions options = new RequestOptions().circleCrop().override(sizeIconPx);
-            for (final Mark mark: mListMarks) {
-                URL path = null;
-                try {
-                    path = new URL("https://defcon.ru/wp-content/uploads/2015/12/ico_android-3.png");
-                } catch (MalformedURLException e) {
-                    Log.d(TAG, "Parsing URL with image of profile is failed");
-                }
-
-                Glide.with(this)
-                        .asBitmap()
-                        .apply(options)
-                        .load(path)
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                                mMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(mark.getLatitude(), mark.getLongitude()))
-                                        .icon(BitmapDescriptorFactory.fromBitmap(resource))
-                                        .title(mark.getName()));
-                            }
-                        });
+            for (Mark mark : mListMarks) {
+                mClusterManager.addItem(mark.getCopyObject());
             }
+            mClusterManager.cluster();
         }
     }
 
     private void stashCameraPosition(){
-        if ((mMap != null) && (mMap.getCameraPosition().zoom > Const.MAP_ZOOM_DEFAULT)){
+        if ((mMap != null)){
             mMapBearing = mMap.getCameraPosition().bearing;
             mMapZoom = mMap.getCameraPosition().zoom;
             mCameraPosition = new LatLng(mMap.getCameraPosition().target.latitude,
@@ -203,10 +188,10 @@ public class MapFragment extends BaseFragment implements
         }
     }
 
-    private void restoreCameraPosition(LatLng position) {
-        if (position != null) {
+    private void restoreCameraPosition() {
+        if (mMap != null && mMapZoom != -1) {
             CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(
-                    new CameraPosition(position, mMapZoom, 0, mMapBearing));
+                    new CameraPosition(mCameraPosition, mMapZoom, 0, mMapBearing));
             mMap.moveCamera(cameraUpdate);
         }
     }
@@ -219,6 +204,40 @@ public class MapFragment extends BaseFragment implements
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
-        updateUi();
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<Mark> cluster) {
+
+        // Create the builder to collect all essential cluster items for the bounds.
+        LatLngBounds.Builder builder = LatLngBounds.builder();
+        for (ClusterItem item : cluster.getItems()) {
+            builder.include(item.getPosition());
+        }
+        final LatLngBounds bounds = builder.build();
+        moveCameraToBounds(bounds);
+
+        return true;
+    }
+
+    private void moveCameraToBounds(LatLngBounds bounds){
+        try {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onClusterInfoWindowClick(Cluster<Mark> cluster) {
+    }
+
+    @Override
+    public boolean onClusterItemClick(Mark mark) {
+        return false;
+    }
+
+    @Override
+    public void onClusterItemInfoWindowClick(Mark mark) {
     }
 }

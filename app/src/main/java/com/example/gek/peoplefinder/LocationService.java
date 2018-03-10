@@ -6,15 +6,12 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -26,7 +23,6 @@ import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.LogHelper;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.google.android.gms.maps.model.LatLng;
-
 
 import java.util.Date;
 
@@ -179,7 +175,6 @@ public class LocationService extends Service {
         // create pending intent used when tapping on the app notification
         // open up ScreenMapFragment
         Intent intent = new Intent(this, MainActivity.class);
-
 
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(

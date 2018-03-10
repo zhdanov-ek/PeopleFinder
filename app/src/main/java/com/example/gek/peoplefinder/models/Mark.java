@@ -1,11 +1,14 @@
 package com.example.gek.peoplefinder.models;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Mark extends RealmObject{
+public class Mark extends RealmObject implements ClusterItem {
 
     @PrimaryKey
     private String id;
@@ -67,5 +70,28 @@ public class Mark extends RealmObject{
     }
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @Override
+    public LatLng getPosition() {
+        return new LatLng(latitude, longitude);
+    }
+
+    @Override
+    public String getTitle() {
+        return name;
+    }
+
+    @Override
+    public String getSnippet() {
+        return null;
+    }
+
+    public Mark getCopyObject(){
+        return new Mark(id, name, imageUrl, latitude, longitude, date);
+    }
+
+    public LatLng getLatLng(){
+        return new LatLng(latitude, longitude);
     }
 }

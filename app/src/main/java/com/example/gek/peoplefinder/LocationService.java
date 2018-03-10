@@ -24,6 +24,7 @@ import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.LogHelper;
+import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.google.android.gms.maps.model.LatLng;
 
 
@@ -49,7 +50,7 @@ public class LocationService extends Service {
             if (location != null) {
                 Connection.getInstance().setLastLocation(
                         new LatLng(location.getLatitude(), location.getLongitude()));
-                Db.addMark(Connection.getInstance().getUserName(),
+                Db.addMark(Connection.getInstance().getUserName(), SettingsHelper.getUserProfileImageUrl(),
                         location.getLatitude(), location.getLongitude(), true);
                 String msg = new StringBuilder()
                         .append(location.getLatitude())

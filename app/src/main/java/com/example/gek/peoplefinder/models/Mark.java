@@ -10,6 +10,7 @@ public class Mark extends RealmObject{
     @PrimaryKey
     private String id;
     private String name;
+    private String imageUrl;
     private double latitude;
     private double longitude;
     private Date date;
@@ -17,9 +18,10 @@ public class Mark extends RealmObject{
     public Mark() {
     }
 
-    public Mark(String id, String name, double latitude, double longitude, Date date) {
+    public Mark(String id, String name, String imageUrl, double latitude, double longitude, Date date) {
         this.id = id;;
         this.name = name;
+        this.imageUrl = imageUrl;
         this.latitude = latitude;
         this.longitude = longitude;
         this.date = date;
@@ -37,6 +39,13 @@ public class Mark extends RealmObject{
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public double getLatitude() {

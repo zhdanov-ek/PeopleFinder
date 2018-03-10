@@ -96,7 +96,7 @@ public class MarkFragment extends BaseFragment {
     }
 
     private void saveMark(){
-        Db.addMark(etMarkName.getText().toString(), Double.parseDouble(etLat.getText().toString()),
+        Db.addMark(etMarkName.getText().toString(), null, Double.parseDouble(etLat.getText().toString()),
                 Double.parseDouble(etLng.getText().toString()), false);
 
         etMarkName.setText("");

@@ -17,7 +17,7 @@ public class Db {
     private static final String TAG = "H_DB";
 
 
-    public static void addMark(String name, double latitude, double longitude, boolean isUserLocation){
+    public static void addMark(String name, String imageUrl, double latitude, double longitude, boolean isUserLocation){
         Realm realm = Realm.getDefaultInstance();
 
         final Mark mark = new Mark();
@@ -29,6 +29,7 @@ public class Db {
         }
         mark.setId(id);
         mark.setName(name);
+        mark.setImageUrl(imageUrl);
         mark.setLatitude(latitude);
         mark.setLongitude(longitude);
         mark.setDate(new Date());

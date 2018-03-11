@@ -18,6 +18,12 @@ public class SettingsHelper {
     private static final String PARAM_SHOW_OLD_PERSONS = "old_persons";
     private static final String PARAM_PROVIDER = "provider";
 
+    private static final String PARAM_ROTATE_GESTURES = "rotate_gestures";
+    private static final String PARAM_TILT_GESTURES = "tilt_gestures";
+    private static final String PARAM_MY_LOCATION_BUTTON = "my_location_button";
+    private static final String PARAM_COMPASS = "compass";
+    private static final String PARAM_ZOOM_BUTTONS = "zoom_buttons";
+
     private static SharedPreferences mPref;
 
     private SettingsHelper(){
@@ -98,5 +104,41 @@ public class SettingsHelper {
     public static int getLocationProvider(){
         return mPref.getInt(PARAM_PROVIDER, Const.PROVIDER_NETWORK);
     }
+
+    public static void setRotateGesturesEnabled(boolean isEnabled){
+        updatePref(PARAM_ROTATE_GESTURES, isEnabled);
+    }
+    public static boolean isRotateGesturesEnabled(){
+        return mPref.getBoolean(PARAM_ROTATE_GESTURES, true);
+    }
+
+    public static void setTiltGesturesEnabled(boolean isEnabled){
+        updatePref(PARAM_TILT_GESTURES, isEnabled);
+    }
+    public static boolean isTiltGesturesEnabled(){
+        return mPref.getBoolean(PARAM_TILT_GESTURES, true);
+    }
+
+    public static void setMyLocationButtonEnabled(boolean isEnabled){
+        updatePref(PARAM_MY_LOCATION_BUTTON, isEnabled);
+    }
+    public static boolean isMyLocationButtonEnabled(){
+        return mPref.getBoolean(PARAM_MY_LOCATION_BUTTON, true);
+    }
+
+    public static void setCompassEnabled(boolean isEnabled){
+        updatePref(PARAM_COMPASS, isEnabled);
+    }
+    public static boolean isCompassEnabled(){
+        return mPref.getBoolean(PARAM_COMPASS, true);
+    }
+
+    public static void setZoomButtonsEnabled(boolean isEnabled){
+        updatePref(PARAM_ZOOM_BUTTONS, isEnabled);
+    }
+    public static boolean isZoomButtonsEnabled(){
+        return mPref.getBoolean(PARAM_ZOOM_BUTTONS, true);
+    }
+
 
 }

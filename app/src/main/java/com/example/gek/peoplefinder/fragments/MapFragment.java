@@ -1,8 +1,11 @@
 package com.example.gek.peoplefinder.fragments;
 
 
+import android.Manifest.permission;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -12,6 +15,7 @@ import android.view.ViewGroup;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
+import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.example.gek.peoplefinder.helpers.map.MarkRenderer;
 import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.CameraUpdate;
@@ -39,7 +43,7 @@ public class MapFragment extends BaseFragment implements
         ClusterManager.OnClusterInfoWindowClickListener<Mark>,
         ClusterManager.OnClusterItemClickListener<Mark>,
         ClusterManager.OnClusterItemInfoWindowClickListener<Mark> {
-    
+
     private static final String TAG = "F_MAP";
 
     private Realm mRealm;
@@ -80,12 +84,11 @@ public class MapFragment extends BaseFragment implements
         View rootView = null;
         try {
             rootView = inflater.inflate(R.layout.fragment_map, container, false);
-                MapsInitializer.initialize(this.getActivity());
-                mMapView = (MapView) rootView.findViewById(R.id.map);
-                mMapView.onCreate(savedInstanceState);
-                mMapView.getMapAsync(this);
-        }
-        catch (InflateException e){
+            MapsInitializer.initialize(this.getActivity());
+            mMapView = (MapView) rootView.findViewById(R.id.map);
+            mMapView.onCreate(savedInstanceState);
+            mMapView.getMapAsync(this);
+        } catch (InflateException e) {
             Log.e(TAG, "Inflate exception");
         }
         return rootView;
@@ -139,7 +142,7 @@ public class MapFragment extends BaseFragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mRealm != null){
+        if (mRealm != null) {
             mRealm.close();
         }
         mMapView.onDestroy();
@@ -153,12 +156,12 @@ public class MapFragment extends BaseFragment implements
     }
 
     private void updateUi() {
-        if ((mMap != null) && (mListMarks != null)){
+        if ((mMap != null) && (mListMarks != null)) {
             mMap.clear();
             mClusterManager.clearItems();
             drawMarks();
-            if (mIsFirstInitializationCameraPosition){
-                if (mListMarks != null && mListMarks.size() > 0){
+            if (mIsFirstInitializationCameraPosition) {
+                if (mListMarks != null && mListMarks.size() > 0) {
                     LatLngBounds.Builder builder = LatLngBounds.builder();
                     for (Mark mark : mListMarks) {
                         builder.include(mark.getLatLng());
@@ -170,8 +173,8 @@ public class MapFragment extends BaseFragment implements
         }
     }
 
-    private void drawMarks(){
-        if (Connection.getInstance().isServiceRunning()){
+    private void drawMarks() {
+        if (Connection.getInstance().isServiceRunning()) {
             for (Mark mark : mListMarks) {
                 mClusterManager.addItem(mark.getCopyObject());
             }
@@ -179,8 +182,8 @@ public class MapFragment extends BaseFragment implements
         }
     }
 
-    private void stashCameraPosition(){
-        if ((mMap != null)){
+    private void stashCameraPosition() {
+        if ((mMap != null)) {
             mMapBearing = mMap.getCameraPosition().bearing;
             mMapZoom = mMap.getCameraPosition().zoom;
             mCameraPosition = new LatLng(mMap.getCameraPosition().target.latitude,
@@ -198,12 +201,22 @@ public class MapFragment extends BaseFragment implements
 
 
     private void setMapSettings() {
-//                mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mMap.getUiSettings().setRotateGesturesEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(SettingsHelper.isCompassEnabled());
+        mMap.getUiSettings().setZoomControlsEnabled(SettingsHelper.isZoomButtonsEnabled());
+        mMap.getUiSettings().setRotateGesturesEnabled(SettingsHelper.isRotateGesturesEnabled());
+        mMap.getUiSettings().setTiltGesturesEnabled(SettingsHelper.isTiltGesturesEnabled());
         mMap.getUiSettings().setMapToolbarEnabled(false);
+
+        boolean isMyLocationButtonEnabled = SettingsHelper.isMyLocationButtonEnabled();
+        mMap.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
+        if (isMyLocationButtonEnabled
+            && (ActivityCompat.checkSelfPermission(getContext(), permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)){
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        } else {
+            mMap.setMyLocationEnabled(false);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        }
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.example.gek.peoplefinder.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,7 @@ import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.LogHelper;
+import com.example.gek.peoplefinder.helpers.SettingsHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +36,11 @@ public class SettingsFragment extends BaseFragment {
     @BindView(R.id.sbRate) protected SeekBar sbRate;
     @BindView(R.id.switchOldPerson) protected SwitchCompat switchOldPerson;
     @BindView(R.id.switchServiceEnable) protected SwitchCompat switchServiceEnable;
+    @BindView(R.id.switchCompass) protected SwitchCompat switchCompass;
+    @BindView(R.id.switchMyLocationButton) protected SwitchCompat switchMyLocationButton;
+    @BindView(R.id.switchRotateGestures) protected SwitchCompat switchRotateGestures;
+    @BindView(R.id.switchTiltGestures) protected SwitchCompat switchTiltGestures;
+    @BindView(R.id.switchZoomButtons) protected SwitchCompat switchZoomButton;
 
     private LogHelper logHelper;
     private Unbinder unbinder;
@@ -101,6 +106,11 @@ public class SettingsFragment extends BaseFragment {
         sbRate.setProgress((Connection.getInstance().getFrequencyLocationUpdate()/1000)/Const.BASE_STEP_FREQUENCY - 1);
         switchOldPerson.setChecked(Connection.getInstance().isShowOldPersons());
         switchServiceEnable.setChecked(Connection.getInstance().isServiceRunning());
+        switchCompass.setChecked(SettingsHelper.isCompassEnabled());
+        switchMyLocationButton.setChecked(SettingsHelper.isMyLocationButtonEnabled());
+        switchRotateGestures.setChecked(SettingsHelper.isRotateGesturesEnabled());
+        switchTiltGestures.setChecked(SettingsHelper.isTiltGesturesEnabled());
+        switchZoomButton.setChecked(SettingsHelper.isZoomButtonsEnabled());
 
         return rootView;
     }
@@ -123,6 +133,26 @@ public class SettingsFragment extends BaseFragment {
 
     @OnClick(R.id.rbNetwork) protected void onClickNetwork(){
         Connection.getInstance().setLocationProvider(Const.PROVIDER_NETWORK);
+    }
+
+    @OnClick(R.id.switchZoomButtons) protected void onClickZoomButtons(){
+        SettingsHelper.setZoomButtonsEnabled(switchZoomButton.isChecked());
+    }
+
+    @OnClick(R.id.switchTiltGestures) protected void onClickTiltGestures(){
+        SettingsHelper.setTiltGesturesEnabled(switchTiltGestures.isChecked());
+    }
+
+    @OnClick(R.id.switchRotateGestures) protected void onClickRotateGestures(){
+        SettingsHelper.setRotateGesturesEnabled(switchRotateGestures.isChecked());
+    }
+
+    @OnClick(R.id.switchCompass) protected void onClickCompass(){
+        SettingsHelper.setCompassEnabled(switchCompass.isChecked());
+    }
+
+    @OnClick(R.id.switchMyLocationButton) protected void onClickMyLocationButton(){
+        SettingsHelper.setMyLocationButtonEnabled(switchMyLocationButton.isChecked());
     }
 
     private void updateLabelFrequency(int frequency){

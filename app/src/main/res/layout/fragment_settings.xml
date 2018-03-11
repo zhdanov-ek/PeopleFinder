@@ -12,7 +12,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
             <LinearLayout
                 style="@style/ItemSettings">
@@ -99,9 +99,7 @@
                 style="@style/ItemSettings">
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switchOldPerson"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    style="@style/SettingsSwitch"
                     android:text="@string/settings_show_old_person" />
             </LinearLayout>
 
@@ -111,14 +109,48 @@
                 style="@style/ItemSettings">
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switchServiceEnable"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Enable LocationService" />
+                    style="@style/SettingsSwitch"
+                    android:text="@string/settings_enable_locationservice" />
             </LinearLayout>
 
             <include layout="@layout/horizontal_line"/>
 
+            <LinearLayout
+                style="@style/ItemSettings">
+
+                <TextView
+                    android:text="@string/settings_of_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switchZoomButtons"
+                    style="@style/SettingsSwitch"
+                    android:text="@string/settings_zoom_button" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switchCompass"
+                    style="@style/SettingsSwitch"
+                    android:text="@string/settings_compass" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switchMyLocationButton"
+                    style="@style/SettingsSwitch"
+                    android:text="@string/settings_my_location_button" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switchTiltGestures"
+                    style="@style/SettingsSwitch"
+                    android:text="@string/settings_tilt_gestures" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switchRotateGestures"
+                    style="@style/SettingsSwitch"
+                    android:text="@string/settings_rotate_gestures" />
+
+            </LinearLayout>
+
+            <include layout="@layout/horizontal_line"/>
         </LinearLayout>
 
     </ScrollView>

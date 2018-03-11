@@ -11,11 +11,14 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
+import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
+import com.example.gek.peoplefinder.helpers.Utils;
 import com.example.gek.peoplefinder.helpers.map.MarkRenderer;
 import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.CameraUpdate;
@@ -42,7 +45,7 @@ public class MapFragment extends BaseFragment implements
         ClusterManager.OnClusterClickListener<Mark>,
         ClusterManager.OnClusterInfoWindowClickListener<Mark>,
         ClusterManager.OnClusterItemClickListener<Mark>,
-        ClusterManager.OnClusterItemInfoWindowClickListener<Mark> {
+        ClusterManager.OnClusterItemInfoWindowClickListener<Mark>{
 
     private static final String TAG = "F_MAP";
 
@@ -56,6 +59,7 @@ public class MapFragment extends BaseFragment implements
     private LatLng mCameraPosition;
     private boolean mIsFirstInitializationCameraPosition = true;
     private List<Mark> mListMarks;
+    private Mark mUserMark;
 
     private ClusterManager<Mark> mClusterManager;
 
@@ -73,6 +77,13 @@ public class MapFragment extends BaseFragment implements
         @Override
         public void onChange(RealmResults<Mark> elements) {
             mListMarks = elements;
+            String currentUserMarkId = Db.generateUserMarkId();
+            for (Mark mark: mListMarks) {
+                if (mark.getId().contentEquals(currentUserMarkId)){
+                    mUserMark = mark.getCopyObject();
+                    break;
+                }
+            }
             updateUi();
         }
     };
@@ -252,5 +263,17 @@ public class MapFragment extends BaseFragment implements
 
     @Override
     public void onClusterItemInfoWindowClick(Mark mark) {
+        LatLng myLocation = mUserMark.getLatLng();
+        StringBuilder info = new StringBuilder();
+        if (mUserMark.getId().contentEquals(mark.getId())){
+            info.append(getString(R.string.map_it_is_you));
+        } else {
+            info.append(mark.getName()).append("\n");
+            info.append(Utils.getDistance(myLocation, mark.getLatLng())).append("\n");
+            info.append(Utils.getDirection(myLocation, mark.getLatLng())).append("\n");
+        }
+
+        Toast.makeText(getContext(), info, Toast.LENGTH_LONG).show();
+
     }
 }

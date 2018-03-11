@@ -16,6 +16,9 @@ import io.realm.RealmResults;
 public class Db {
     private static final String TAG = "H_DB";
 
+    public static String generateUserMarkId(){
+        return Connection.getInstance().getUserName() + Connection.getInstance().getUserEmail();
+    }
 
     public static void addMark(String name, String imageUrl, double latitude, double longitude, boolean isUserLocation){
         Realm realm = Realm.getDefaultInstance();
@@ -23,7 +26,7 @@ public class Db {
         final Mark mark = new Mark();
         String id;
         if (isUserLocation){
-            id = Connection.getInstance().getUserName() + Connection.getInstance().getUserEmail();
+            id = generateUserMarkId();
         } else {
             id = name;
         }

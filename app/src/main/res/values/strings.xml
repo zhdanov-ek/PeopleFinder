@@ -42,6 +42,7 @@
     <string name="settings_tilt_gestures">Tilt gestures</string>
     <string name="settings_rotate_gestures">Rotate gestures</string>
     <string name="settings_enable_locationservice">Enable LocationService</string>
+    <string name="map_it_is_you">It\'s You</string>
 
     <!-- ACTIONS -->
 

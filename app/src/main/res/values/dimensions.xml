@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="custom_profile_image">50dp</dimen>
-    <dimen name="custom_profile_padding">2dp</dimen>
+    <dimen name="custom_mark_height">50dp</dimen>
+    <dimen name="custom_mark_width">40dp</dimen>
+    <dimen name="custom_mark_text_height">15dp</dimen>
+    <dimen name="custom_mark_image_height">35dp</dimen>
+    <dimen name="custom_mark_padding">2dp</dimen>
+    <dimen name="custom_mark_text_size">10dp</dimen>
 </resources>

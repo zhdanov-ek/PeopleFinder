@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/custom_mark_width"
     android:layout_height="@dimen/custom_mark_height">
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/iconMarkImageView"
         android:layout_width="@dimen/custom_mark_width"
-        android:layout_height="@dimen/custom_mark_image_height" />
+        android:layout_height="@dimen/custom_mark_image_height"
+        android:layout_gravity="top"
+        tools:ignore="ContentDescription" />
 
     <TextView
-        android:id="@id/amu_text"
+        android:id="@+id/shortMarkNameTextView"
         android:layout_width="@dimen/custom_mark_width"
         android:layout_height="@dimen/custom_mark_text_height"
         android:layout_gravity="bottom"
-        android:gravity="center_horizontal"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
         android:padding="0dp"
         android:textColor="@color/colorMarkName"
         android:textSize="@dimen/custom_mark_text_size"
-        tools:text="4"
-        tools:ignore="SpUsage" />
+        tools:ignore="SpUsage"
+        tools:text="Alexandr" />
 
 </FrameLayout>

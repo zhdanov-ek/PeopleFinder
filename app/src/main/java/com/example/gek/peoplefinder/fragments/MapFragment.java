@@ -124,7 +124,7 @@ public class MapFragment extends BaseFragment implements
         mMap = googleMap;
         setMapSettings();
         mClusterManager = new ClusterManager<Mark>(getContext(), mMap);
-        mClusterManager.setRenderer(new MarkRenderer(getContext(), mMap, mClusterManager));
+        mClusterManager.setRenderer(new MarkRenderer(getActivity(), mMap, mClusterManager));
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);

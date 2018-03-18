@@ -17,17 +17,19 @@ public class Mark extends RealmObject implements ClusterItem {
     private double latitude;
     private double longitude;
     private Date date;
+    private boolean isPerson;
 
     public Mark() {
     }
 
-    public Mark(String id, String name, String imageUrl, double latitude, double longitude, Date date) {
+    public Mark(String id, String name, String imageUrl, double latitude, double longitude, Date date, boolean isPerson) {
         this.id = id;;
         this.name = name;
         this.imageUrl = imageUrl;
         this.latitude = latitude;
         this.longitude = longitude;
         this.date = date;
+        this.isPerson = isPerson;
     }
 
     public String getId() {
@@ -72,6 +74,13 @@ public class Mark extends RealmObject implements ClusterItem {
         this.date = date;
     }
 
+    public boolean isPerson() {
+        return isPerson;
+    }
+    public void setIsPerson(boolean person) {
+        isPerson = person;
+    }
+
     @Override
     public LatLng getPosition() {
         return new LatLng(latitude, longitude);
@@ -88,7 +97,7 @@ public class Mark extends RealmObject implements ClusterItem {
     }
 
     public Mark getCopyObject(){
-        return new Mark(id, name, imageUrl, latitude, longitude, date);
+        return new Mark(id, name, imageUrl, latitude, longitude, date, isPerson);
     }
 
     public LatLng getLatLng(){

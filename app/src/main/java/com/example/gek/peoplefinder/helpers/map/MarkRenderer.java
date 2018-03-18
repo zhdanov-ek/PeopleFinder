@@ -3,6 +3,7 @@ package com.example.gek.peoplefinder.helpers.map;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,8 @@ public class MarkRenderer extends DefaultClusterRenderer<Mark> {
     private final int mDimension;
     private Context mContext;
 
+    public static final String TAG = "RENDERER";
+
     public MarkRenderer(Context context, GoogleMap map, ClusterManager clusterManager) {
         super(context, map, clusterManager);
 
@@ -50,13 +53,16 @@ public class MarkRenderer extends DefaultClusterRenderer<Mark> {
         int padding = (int) context.getResources().getDimension(R.dimen.custom_profile_padding);
         mImageView.setPadding(padding, padding, padding, padding);
         mIconGenerator.setContentView(mImageView);
+
+        Log.d(TAG, "MarkRenderer: mImageView " + mImageView.hashCode());
     }
 
     @Override
     protected void onBeforeClusterItemRendered(Mark mark, MarkerOptions markerOptions) {
         // Draw a single person.
         // Set the info window to show their name.
-        mImageView.setImageResource(R.drawable.ic_person);
+        mImageView.setImageResource(mark.isPerson() ? R.drawable.ic_man : R.drawable.ic_place);
+
         Bitmap icon = mIconGenerator.makeIcon();
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(mark.getName());
     }
@@ -73,7 +79,8 @@ public class MarkRenderer extends DefaultClusterRenderer<Mark> {
         for (Mark mark : cluster.getItems()) {
             // Draw 4 at most.
             if (profilePhotos.size() == 4) break;
-            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_person);
+            Drawable drawable = mContext.getResources().getDrawable(
+                    mark.isPerson() ? R.drawable.ic_man : R.drawable.ic_place);
             drawable.setBounds(0, 0, width, height);
             profilePhotos.add(drawable);
         }

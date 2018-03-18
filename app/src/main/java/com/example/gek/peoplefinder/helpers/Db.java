@@ -36,6 +36,7 @@ public class Db {
         mark.setLatitude(latitude);
         mark.setLongitude(longitude);
         mark.setDate(new Date());
+        mark.setIsPerson(isUserLocation);
 
         realm.beginTransaction();
         realm.insertOrUpdate(mark);

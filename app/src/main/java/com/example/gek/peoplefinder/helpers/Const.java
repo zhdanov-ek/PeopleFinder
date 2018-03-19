@@ -8,10 +8,11 @@ public class Const {
 
     public static final int BASE_STEP_FREQUENCY = 20;
 
-    public static final float MAP_ZOOM_DEFAULT = 10;
-    public static final float MAP_BEARING_DEFAULT = 0;
     public static final int CRITICAL_TIME_OLD = 30 * 60 * 1000;
 
     public static final int PROVIDER_NETWORK = 0;
     public static final int PROVIDER_GPS = 1;
+
+    public static final String PARAM_LATITUDE = "latitude";
+    public static final String PARAM_LONGITUDE = "longitude";
 }

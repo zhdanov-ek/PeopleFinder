@@ -21,9 +21,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:hint="mark name"
+            android:hint="@string/mark_name_of_place"
+            android:inputType="textCapSentences"
             android:maxLines="1"
-            android:maxLength="10" />
+            android:singleLine="true"
+            android:maxLength="50" />
     </android.support.design.widget.TextInputLayout>
 
     <RadioGroup
@@ -38,13 +40,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="manual location" />
+            android:text="@string/mark_manual_location" />
 
         <RadioButton
             android:id="@+id/rbCurrentLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="current location" />
+            android:text="@string/mark_current_location" />
 
     </RadioGroup>
 
@@ -64,7 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="latitude"
+                android:hint="@string/latitude"
                 android:inputType="numberDecimal|numberSigned"
                 android:maxLength="10" />
         </android.support.design.widget.TextInputLayout>
@@ -80,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="longitude"
+                android:hint="@string/longitude"
                 android:inputType="numberDecimal|numberSigned"
                 android:maxLength="10" />
         </android.support.design.widget.TextInputLayout>

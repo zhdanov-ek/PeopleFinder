@@ -2,8 +2,8 @@ package com.example.gek.peoplefinder.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
+import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.Utils;
 import com.google.android.gms.maps.model.LatLng;
@@ -53,6 +54,11 @@ public class MarkFragment extends BaseFragment {
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        insertLatLngFromArg();
+    }
 
     @Override
     public void onStart() {
@@ -104,7 +110,9 @@ public class MarkFragment extends BaseFragment {
         etLat.setText("");
         etMarkName.requestFocus();
         rbManualLocation.setChecked(true);
+        mFragmentChanger.hideKeyboard();
         Toast.makeText(getContext(), "Saved...", Toast.LENGTH_SHORT).show();
+        mFragmentChanger.showMapFragment();
     }
 
     private boolean validateLatLng(){
@@ -139,5 +147,17 @@ public class MarkFragment extends BaseFragment {
         tilName.setError(null);
         tilLat.setError(null);
         tilLng.setError(null);
+    }
+
+    private void insertLatLngFromArg() {
+        Bundle args = getArguments();
+        if (args != null) {
+            double latitude = args.getDouble(Const.PARAM_LATITUDE, -1);
+            double longitude = args.getDouble(Const.PARAM_LONGITUDE, -1);
+            if (latitude != -1 && longitude != -1) {
+                etLat.setText(Double.toString(latitude));
+                etLng.setText(Double.toString(longitude));
+            }
+        }
     }
 }

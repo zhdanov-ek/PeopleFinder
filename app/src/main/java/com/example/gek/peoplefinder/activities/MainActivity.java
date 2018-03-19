@@ -1,6 +1,7 @@
 package com.example.gek.peoplefinder.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -17,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,6 +46,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity  implements
+        FragmentChanger,
         NavigationView.OnNavigationItemSelectedListener,
         DrawerMenuStateChanger,
         GoogleApiClient.ConnectionCallbacks,
@@ -197,7 +200,7 @@ public class MainActivity extends AppCompatActivity  implements
                 break;
 
             case R.id.nav_mark:
-                showMarkFragment();
+                showMarkFragment(null);
                 break;
 
             case R.id.nav_logs:
@@ -257,7 +260,8 @@ public class MainActivity extends AppCompatActivity  implements
         }
     }
 
-    private void showMapFragment(){
+    @Override
+    public void showMapFragment(){
         if (checkLocationPermission(Const.RC_INIT_LOCATION)) {
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             ft.replace(R.id.container, new MapFragment(), null);
@@ -278,11 +282,14 @@ public class MainActivity extends AppCompatActivity  implements
         }
     }
 
-    private void showMarkFragment(){
+    @Override
+    public void showMarkFragment(Bundle bundle){
         if (mStateMenu != StateMenu.MARK){
             clearBackStack();
             FragmentTransaction ft = mFragmentManager.beginTransaction();
-            ft.replace(R.id.container, new MarkFragment(), null);
+            MarkFragment markFragment = new MarkFragment();
+            markFragment.setArguments(bundle);
+            ft.replace(R.id.container, markFragment, null);
             ft.addToBackStack(null);
             ft.commit();
         }
@@ -324,5 +331,17 @@ public class MainActivity extends AppCompatActivity  implements
 
     @OnClick(R.id.btnGrant) protected void onClickGrant(){
         checkLocationPermission(Const.RC_INIT_LOCATION);
+    }
+
+    @Override
+    public void hideKeyboard(){
+        // Check if no view has focus:
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null){
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
     }
 }

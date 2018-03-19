@@ -24,6 +24,8 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
 
+    <string name="longitude">Longitude</string>
+    <string name="latitude">Latitude</string>
 
     <string name="mes_service_work">Your location detect in current moment</string>
 
@@ -42,9 +44,12 @@
     <string name="settings_tilt_gestures">Tilt gestures</string>
     <string name="settings_rotate_gestures">Rotate gestures</string>
     <string name="settings_enable_locationservice">Enable LocationService</string>
+
+    <string name="mark_manual_location">Manual location</string>
+    <string name="mark_current_location">Current location</string>
+    <string name="mark_name_of_place">Name of place</string>
+
     <string name="map_it_is_you">It\'s You</string>
+    <string name="map_request_for_new_mark">Create new place</string>
 
-    <!-- ACTIONS -->
-
-    <!-- TODO: Remove or change this placeholder text -->
 </resources>

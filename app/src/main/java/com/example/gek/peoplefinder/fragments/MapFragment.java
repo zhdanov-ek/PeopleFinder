@@ -5,6 +5,7 @@ import android.Manifest.permission;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.InflateException;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.helpers.Connection;
+import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.example.gek.peoplefinder.helpers.Utils;
@@ -45,7 +47,8 @@ public class MapFragment extends BaseFragment implements
         ClusterManager.OnClusterClickListener<Mark>,
         ClusterManager.OnClusterInfoWindowClickListener<Mark>,
         ClusterManager.OnClusterItemClickListener<Mark>,
-        ClusterManager.OnClusterItemInfoWindowClickListener<Mark>{
+        ClusterManager.OnClusterItemInfoWindowClickListener<Mark>,
+        GoogleMap.OnMapLongClickListener {
 
     private static final String TAG = "F_MAP";
 
@@ -128,6 +131,7 @@ public class MapFragment extends BaseFragment implements
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
         mMap.setOnInfoWindowClickListener(mClusterManager);
+        mMap.setOnMapLongClickListener(this);
         mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterInfoWindowClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
@@ -274,6 +278,20 @@ public class MapFragment extends BaseFragment implements
         }
 
         Toast.makeText(getContext(), info, Toast.LENGTH_LONG).show();
+    }
 
+    @Override
+    public void onMapLongClick(final LatLng latLng) {
+        Snackbar snackbar = Snackbar.make(mMapView, getString(R.string.map_request_for_new_mark), Snackbar.LENGTH_LONG);
+        snackbar.setAction("Yes", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putDouble(Const.PARAM_LATITUDE, latLng.latitude);
+                bundle.putDouble(Const.PARAM_LONGITUDE, latLng.longitude);
+                mFragmentChanger.showMarkFragment(bundle);
+            }
+        });
+        snackbar.show();
     }
 }

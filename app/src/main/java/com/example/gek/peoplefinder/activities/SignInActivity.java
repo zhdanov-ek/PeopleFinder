@@ -5,7 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -50,6 +52,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
     @BindView(R.id.etPassword) protected EditText etPassword;
     @BindView(R.id.progressView) protected View progressView;
     @BindView(R.id.loginFormView) protected View loginFormView;
+    @BindView(R.id.tvRegister) protected TextView tvRegister;
 
     private FacebookAuth facebookAuth;
     private GoogleAuth googleAuth;
@@ -60,6 +63,10 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         ButterKnife.bind(this);
+
+        SpannableString content = new SpannableString(getString(R.string.action_register));
+        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+        tvRegister.setText(content);
 
         etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -145,7 +152,8 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
 
 
 
-    @OnClick(R.id.btnRegister) protected void clickOnRegister(){
+
+    @OnClick(R.id.tvRegister) protected void clickOnRegister(){
         startActivity(new Intent(SignInActivity.this, RegisterActivity.class));
     }
 
@@ -185,7 +193,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         }
 
         if (TextUtils.isEmpty(email)) {
-            etUserName.setError(getString(R.string.error_field_required));
+            etUserName.setError(getString(R.string.error_name_required));
             focusView = etUserName;
             cancel = true;
         }

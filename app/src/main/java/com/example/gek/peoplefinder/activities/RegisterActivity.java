@@ -18,7 +18,6 @@ import com.example.gek.peoplefinder.auth.UserManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnEditorAction;
 import io.realm.ObjectServerError;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
@@ -69,19 +68,19 @@ public class RegisterActivity extends AppCompatActivity implements SyncUser.Call
         View focusView = null;
 
         if (isEmpty(username)) {
-            etUserName.setError(getString(R.string.error_field_required));
+            etUserName.setError(getString(R.string.error_name_required));
             focusView = etUserName;
             cancel = true;
         }
 
         if (isEmpty(password)) {
-            etPassword.setError(getString(R.string.error_field_required));
+            etPassword.setError(getString(R.string.error_invalid_password));
             focusView = etPassword;
             cancel = true;
         }
 
         if (isEmpty(passwordConfirmation)) {
-            etPasswordConfirmation.setError(getString(R.string.error_field_required));
+            etPasswordConfirmation.setError(getString(R.string.error_invalid_password));
             focusView = etPasswordConfirmation;
             cancel = true;
         }

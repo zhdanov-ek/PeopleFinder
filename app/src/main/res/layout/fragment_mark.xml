@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="20dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
+    android:paddingTop="20dp"
     tools:context="com.example.gek.peoplefinder.fragments.MarkFragment">
 
 
@@ -23,9 +23,9 @@
             android:gravity="center"
             android:hint="@string/mark_name_of_place"
             android:inputType="textCapSentences"
+            android:maxLength="50"
             android:maxLines="1"
-            android:singleLine="true"
-            android:maxLength="50" />
+            android:singleLine="true" />
     </android.support.design.widget.TextInputLayout>
 
     <RadioGroup
@@ -91,10 +91,13 @@
 
     <Button
         android:id="@+id/btnAddMark"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="add" />
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_login_button"
+        android:text="@string/add"
+        android:textColor="@color/colorWhite" />
 
 
 </LinearLayout>

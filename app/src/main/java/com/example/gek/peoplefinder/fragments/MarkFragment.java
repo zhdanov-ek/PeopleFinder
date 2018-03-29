@@ -17,9 +17,9 @@ import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.Utils;
-import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.model.LatLng;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -29,7 +29,6 @@ import butterknife.Unbinder;
 public class MarkFragment extends BaseFragment {
     private static final String TAG = "F_MARK";
 
-    private String incorrectValue = "Incorrect value";
     private Unbinder unbinder;
 
     @BindView(R.id.rbManualLocation) protected RadioButton rbManualLocation;
@@ -39,16 +38,15 @@ public class MarkFragment extends BaseFragment {
     @BindView(R.id.tilName) protected TextInputLayout tilName;
     @BindView(R.id.tilLat) protected TextInputLayout tilLat;
     @BindView(R.id.tilLng) protected TextInputLayout tilLng;
+    @BindString(R.string.error_incorrect_value) protected String incorrectValue;
 
     public MarkFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_mark, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
@@ -122,12 +120,14 @@ public class MarkFragment extends BaseFragment {
         String lat = etLat.getText().toString();
         if ((lat.length() == 0) || ( !Utils.validateLat(lat) )){
             tilLat.setError(incorrectValue);
+            etLat.requestFocus();
             isValid = false;
         }
 
         String lng = etLng.getText().toString();
         if ((lng.length() == 0) || ( !Utils.validateLng(lng)) ){
             tilLng.setError(incorrectValue);
+            etLng.requestFocus();
             isValid = false;
         }
 
@@ -137,6 +137,7 @@ public class MarkFragment extends BaseFragment {
     private boolean validateName(){
         if (etMarkName.getText().toString().replaceAll(" ", "").length() == 0){
             tilName.setError(incorrectValue);
+            etMarkName.requestFocus();
             return false;
         } else {
             tilName.setError(null);

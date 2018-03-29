@@ -1,5 +1,8 @@
 package com.example.gek.peoplefinder.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -8,7 +11,7 @@ import java.util.Date;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Mark extends RealmObject implements ClusterItem {
+public class Mark extends RealmObject implements ClusterItem, Parcelable {
 
     @PrimaryKey
     private String id;
@@ -103,4 +106,46 @@ public class Mark extends RealmObject implements ClusterItem {
     public LatLng getLatLng(){
         return new LatLng(latitude, longitude);
     }
+
+
+
+    // Parcelable
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.imageUrl);
+        dest.writeDouble(this.latitude);
+        dest.writeDouble(this.longitude);
+        dest.writeLong(this.date != null ? this.date.getTime() : -1);
+        dest.writeByte(this.isPerson ? (byte) 1 : (byte) 0);
+    }
+
+    protected Mark(Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+        this.imageUrl = in.readString();
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
+        long tmpDate = in.readLong();
+        this.date = tmpDate == -1 ? null : new Date(tmpDate);
+        this.isPerson = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<Mark> CREATOR = new Parcelable.Creator<Mark>() {
+        @Override
+        public Mark createFromParcel(Parcel source) {
+            return new Mark(source);
+        }
+
+        @Override
+        public Mark[] newArray(int size) {
+            return new Mark[size];
+        }
+    };
 }

@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity  implements
 
     private static final String TAG = "A_MAIN";
 
+    public static final String TAG_FRAGMENT_MAP = "map";
+    public static final String TAG_FRAGMENT_MARK = "mark";
+
+
     private boolean logoutAfterClose;
     private FragmentManager mFragmentManager;
     private GoogleApiClient mGoogleApiClient;
@@ -230,17 +234,11 @@ public class MainActivity extends AppCompatActivity  implements
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         logoutAfterClose = true;
+        finish();
     }
 
     @Override
     protected void onStop() {
-//        if (adapter != null) {
-//            touchHelper.attachToRecyclerView(null);
-//            adapter = null;
-//        }
-//        realm.removeAllChangeListeners();
-//        realm.close();
-//        realm = null;
         if (logoutAfterClose) {
             /*
              * We need call logout() here since onCreate() of the next Activity is already
@@ -263,12 +261,16 @@ public class MainActivity extends AppCompatActivity  implements
     @Override
     public void showMapFragment(){
         if (checkLocationPermission(Const.RC_INIT_LOCATION)) {
-            FragmentTransaction ft = mFragmentManager.beginTransaction();
-            ft.replace(R.id.container, new MapFragment(), null);
-            ft.addToBackStack(null);
-            ft.commit();
-            lockPermissions.setVisibility(View.GONE);
-            setEnableDrawerMenu(true);
+            if (mFragmentManager.findFragmentByTag(TAG_FRAGMENT_MAP) != null){
+                clearBackStack();
+            } else {
+                FragmentTransaction ft = mFragmentManager.beginTransaction();
+                ft.replace(R.id.container, new MapFragment(), TAG_FRAGMENT_MAP);
+                ft.addToBackStack(null);
+                ft.commit();
+                lockPermissions.setVisibility(View.GONE);
+                setEnableDrawerMenu(true);
+            }
         }
     }
 

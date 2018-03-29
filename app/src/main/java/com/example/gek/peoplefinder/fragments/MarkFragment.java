@@ -17,6 +17,7 @@ import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.Utils;
+import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.BindView;
@@ -152,8 +153,8 @@ public class MarkFragment extends BaseFragment {
     private void insertLatLngFromArg() {
         Bundle args = getArguments();
         if (args != null) {
-            double latitude = args.getDouble(Const.PARAM_LATITUDE, -1);
-            double longitude = args.getDouble(Const.PARAM_LONGITUDE, -1);
+            double latitude = args.getDouble(Const.ARG_LATITUDE, -1);
+            double longitude = args.getDouble(Const.ARG_LONGITUDE, -1);
             if (latitude != -1 && longitude != -1) {
                 etLat.setText(Double.toString(latitude));
                 etLng.setText(Double.toString(longitude));

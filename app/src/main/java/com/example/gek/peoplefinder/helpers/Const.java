@@ -13,6 +13,6 @@ public class Const {
     public static final int PROVIDER_NETWORK = 0;
     public static final int PROVIDER_GPS = 1;
 
-    public static final String PARAM_LATITUDE = "latitude";
-    public static final String PARAM_LONGITUDE = "longitude";
+    public static final String ARG_LATITUDE = "latitude";
+    public static final String ARG_LONGITUDE = "longitude";
 }

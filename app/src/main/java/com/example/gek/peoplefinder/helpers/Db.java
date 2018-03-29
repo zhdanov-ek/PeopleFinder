@@ -20,7 +20,7 @@ public class Db {
         return Connection.getInstance().getUserName() + Connection.getInstance().getUserEmail();
     }
 
-    public static void addMark(String name, String imageUrl, double latitude, double longitude, boolean isUserLocation){
+    public static Mark addMark(String name, String imageUrl, double latitude, double longitude, boolean isUserLocation){
         Realm realm = Realm.getDefaultInstance();
 
         final Mark mark = new Mark();
@@ -42,6 +42,7 @@ public class Db {
         realm.insertOrUpdate(mark);
         realm.commitTransaction();
         realm.close();
+        return mark;
     }
 
     private static void printDb(){

@@ -4,6 +4,8 @@ package com.example.gek.peoplefinder.fragments;
 import android.Manifest.permission;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -12,6 +14,8 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.Toast;
 
 import com.example.gek.peoplefinder.R;
@@ -32,6 +36,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
@@ -73,7 +78,6 @@ public class MapFragment extends BaseFragment implements
         mRealm = Realm.getDefaultInstance();
         final RealmResults<Mark> marks = mRealm.where(Mark.class).findAllAsync();
         mListMarks = marks;
-        marks.addChangeListener(changeListener);
     }
 
     private final RealmChangeListener<RealmResults<Mark>> changeListener = new RealmChangeListener<RealmResults<Mark>>() {
@@ -121,6 +125,29 @@ public class MapFragment extends BaseFragment implements
         mMapView.onResume();
     }
 
+
+    private void animateMarker(final Marker marker){
+        final Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        final long duration = 1500;
+
+        final Interpolator interpolator = new BounceInterpolator();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                float t = Math.max(
+                        1 - interpolator.getInterpolation((float) elapsed / duration), 0);
+                marker.setAnchor(0.5f, 1.0f + 2 * t);
+
+                if (t > 0.0) {
+                    // Post again 16ms later.
+                    handler.postDelayed(this, 16);
+                }
+            }
+        });
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -287,8 +314,8 @@ public class MapFragment extends BaseFragment implements
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putDouble(Const.PARAM_LATITUDE, latLng.latitude);
-                bundle.putDouble(Const.PARAM_LONGITUDE, latLng.longitude);
+                bundle.putDouble(Const.ARG_LATITUDE, latLng.latitude);
+                bundle.putDouble(Const.ARG_LONGITUDE, latLng.longitude);
                 mFragmentChanger.showMarkFragment(bundle);
             }
         });

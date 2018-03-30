@@ -28,10 +28,6 @@ public class LogsFragment extends BaseFragment {
     private AnimatedVectorDrawableCompat rotationAnim;
     private Unbinder unbinder;
 
-    public LogsFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +73,6 @@ public class LogsFragment extends BaseFragment {
         unbinder.unbind();
     }
 
-    // TODO: 11/25/2017 This need move to AsyncTask
     private void refreshLog(){
         fabRefresh.setClickable(false);
         rotationAnim.start();

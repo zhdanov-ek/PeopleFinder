@@ -27,8 +27,6 @@ import butterknife.Unbinder;
 
 
 public class MarkFragment extends BaseFragment {
-    private static final String TAG = "F_MARK";
-
     private Unbinder unbinder;
 
     @BindView(R.id.rbManualLocation) protected RadioButton rbManualLocation;
@@ -38,11 +36,7 @@ public class MarkFragment extends BaseFragment {
     @BindView(R.id.tilName) protected TextInputLayout tilName;
     @BindView(R.id.tilLat) protected TextInputLayout tilLat;
     @BindView(R.id.tilLng) protected TextInputLayout tilLng;
-    @BindString(R.string.error_incorrect_value) protected String incorrectValue;
-
-    public MarkFragment() {
-        // Required empty public constructor
-    }
+    @BindString(R.string.error_wrong_data) protected String wrongData;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -119,14 +113,14 @@ public class MarkFragment extends BaseFragment {
         boolean isValid = true;
         String lat = etLat.getText().toString();
         if ((lat.length() == 0) || ( !Utils.validateLat(lat) )){
-            tilLat.setError(incorrectValue);
+            tilLat.setError(wrongData);
             etLat.requestFocus();
             isValid = false;
         }
 
         String lng = etLng.getText().toString();
         if ((lng.length() == 0) || ( !Utils.validateLng(lng)) ){
-            tilLng.setError(incorrectValue);
+            tilLng.setError(wrongData);
             etLng.requestFocus();
             isValid = false;
         }
@@ -136,7 +130,7 @@ public class MarkFragment extends BaseFragment {
 
     private boolean validateName(){
         if (etMarkName.getText().toString().replaceAll(" ", "").length() == 0){
-            tilName.setError(incorrectValue);
+            tilName.setError(wrongData);
             etMarkName.requestFocus();
             return false;
         } else {

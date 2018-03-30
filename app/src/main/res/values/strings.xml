@@ -25,7 +25,7 @@
     <string name="error_invalid_confirmation_password">Confirmation password required</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_name_required">Name is required</string>
-    <string name="error_incorrect_value">Incorrect value</string>
+    <string name="error_wrong_data">Wrong data</string>
     <string name="error_account_not_exists">Account does not exists</string>
     <string name="error_authentication_failed">Authentication failed</string>
     <string name="error_account_already_exists">Account already exists</string>

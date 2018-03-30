@@ -40,11 +40,14 @@
                 android:src="@drawable/logo" />
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilUserName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
+                app:hintEnabled="false">
 
-                <EditText
-                    android:id="@+id/etUserName"
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/tietUserName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_username"
@@ -55,11 +58,14 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/tilPassword"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:errorEnabled="true"
+                app:hintEnabled="false">
 
-                <EditText
-                    android:id="@+id/etPassword"
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/tietPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
@@ -115,7 +121,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:text="@string/new_user"
+                    android:text="@string/no_account_yet"
                     android:textStyle="bold"
                     tools:ignore="RtlHardcoded" />
 
@@ -125,7 +131,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
-                    android:text="@string/action_register"
+                    android:text="@string/action_sign_up"
                     android:textColor="@color/link"
                     android:textStyle="bold" />
             </LinearLayout>

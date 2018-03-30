@@ -18,13 +18,17 @@
     <string name="prompt_password_conformation">Confirmation</string>
     <string name="action_sign_in">Log In</string>
     <string name="action_log_in_short">Sign in</string>
-    <string name="action_register">Register</string>
+    <string name="no_account_yet">No account yet?</string>
+    <string name="action_sign_up">Sign up</string>
     <string name="action_register_short">Register</string>
     <string name="error_invalid_password">Password required</string>
+    <string name="error_invalid_confirmation_password">Confirmation password required</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_name_required">Name is required</string>
     <string name="error_incorrect_value">Incorrect value</string>
-
+    <string name="error_account_not_exists">Account does not exists</string>
+    <string name="error_authentication_failed">Authentication failed</string>
+    <string name="error_account_already_exists">Account already exists</string>
 
     <string name="longitude">Longitude</string>
     <string name="latitude">Latitude</string>
@@ -52,8 +56,7 @@
     <string name="mark_name_of_place">Name of place</string>
 
     <string name="map_it_is_you">It\'s You</string>
-    <string name="map_request_for_new_mark">Create new place</string>
-    <string name="new_user">New user?</string>
+    <string name="map_request_for_new_mark">Create new place?</string>
     <string name="add">Add</string>
 
 </resources>

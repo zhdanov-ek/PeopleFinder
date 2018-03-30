@@ -4,14 +4,17 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.style.UnderlineSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,12 +47,12 @@ import static com.example.gek.peoplefinder.PeopleFinderApplication.AUTH_URL;
 
 public class SignInActivity extends AppCompatActivity implements SyncUser.Callback {
 
-    private static final String TAG = "A_SIGN_IN";
     public static final String ACTION_IGNORE_CURRENT_USER = "action.ignoreCurrentUser";
-    private static final int RC_SIGN_IN = 10;
 
-    @BindView(R.id.etUserName) protected EditText etUserName;
-    @BindView(R.id.etPassword) protected EditText etPassword;
+    @BindView(R.id.tietUserName) protected TextInputEditText tietUserName;
+    @BindView(R.id.tietPassword) protected TextInputEditText tietPassword;
+    @BindView(R.id.tilUserName) protected TextInputLayout tilUserName;
+    @BindView(R.id.tilPassword) protected TextInputLayout tilPassword;
     @BindView(R.id.progressView) protected View progressView;
     @BindView(R.id.loginFormView) protected View loginFormView;
     @BindView(R.id.tvRegister) protected TextView tvRegister;
@@ -64,11 +67,12 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         setContentView(R.layout.activity_sign_in);
         ButterKnife.bind(this);
 
-        SpannableString content = new SpannableString(getString(R.string.action_register));
+        initTextWatchers();
+        SpannableString content = new SpannableString(getString(R.string.action_sign_up));
         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
         tvRegister.setText(content);
 
-        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        tietPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.log_in || id == EditorInfo.IME_NULL) {
@@ -151,6 +155,41 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
     }
 
 
+    private void initTextWatchers(){
+        tietPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tilPassword.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        tietUserName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tilUserName.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
 
 
     @OnClick(R.id.tvRegister) protected void clickOnRegister(){
@@ -177,24 +216,24 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
 
 
     private void attemptLogin() {
-        etUserName.setError(null);
-        etPassword.setError(null);
+        tilUserName.setError(null);
+        tilPassword.setError(null);
 
-        final String email = etUserName.getText().toString();
-        final String password = etPassword.getText().toString();
+        final String email = tietUserName.getText().toString();
+        final String password = tietPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         if (TextUtils.isEmpty(password)) {
-            etPassword.setError(getString(R.string.error_invalid_password));
-            focusView = etPassword;
+            tilPassword.setError(getString(R.string.error_invalid_password));
+            focusView = tietPassword;
             cancel = true;
         }
 
         if (TextUtils.isEmpty(email)) {
-            etUserName.setError(getString(R.string.error_name_required));
-            focusView = etUserName;
+            tilUserName.setError(getString(R.string.error_name_required));
+            focusView = tietUserName;
             cancel = true;
         }
 
@@ -235,7 +274,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
     @Override
     public void onSuccess(SyncUser user) {
         if (UserManager.getAuthMode() == AuthMode.PASSWORD){
-            SettingsHelper.setUserName(etUserName.getText().toString());
+            SettingsHelper.setUserName(tietUserName.getText().toString());
         }
         showProgress(false);
         loginComplete(user);
@@ -247,10 +286,10 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         String errorMsg;
         switch (error.getErrorCode()) {
             case UNKNOWN_ACCOUNT:
-                errorMsg = "Account does not exists.";
+                errorMsg = getString(R.string.error_account_not_exists);
                 break;
             case INVALID_CREDENTIALS:
-                errorMsg = "The provided credentials are invalid!"; // This message covers also expired account token
+                errorMsg = getString(R.string.error_authentication_failed); // This message covers also expired account token
                 break;
             default:
                 errorMsg = error.toString();

@@ -77,6 +77,7 @@ public class MapFragment extends BaseFragment implements
 
         mRealm = Realm.getDefaultInstance();
         final RealmResults<Mark> marks = mRealm.where(Mark.class).findAllAsync();
+        marks.addChangeListener(changeListener);
         mListMarks = marks;
     }
 

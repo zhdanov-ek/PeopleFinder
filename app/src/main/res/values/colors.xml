@@ -15,6 +15,9 @@
     <color name="colorBlue">#09abf1</color>
     <color name="colorDarkBlue">#6183f2</color>
 
+    <color name="colorRed">#ef7c56</color>
+    <color name="colorDarkRed">#f25d2c</color>
+
     <color name="colorLink">#38b4f2</color>
     <color name="colorLinkPressed">#dc0f6cbe</color>
 

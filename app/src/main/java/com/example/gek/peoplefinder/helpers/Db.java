@@ -15,6 +15,7 @@ import io.realm.Sort;
 
 public class Db {
 
+    private static final String FIELD_MARK_ID = "id";
     private static final String FIELD_MARK_NAME = "name";
     private static final String FIELD_MARK_LATITUDE = "latitude";
     private static final String FIELD_MARK_LONGITUDE = "longitude";
@@ -46,6 +47,22 @@ public class Db {
         realm.commitTransaction();
         realm.close();
         return mark;
+    }
+
+    public static void removeMark(String id){
+        Realm realm = Realm.getDefaultInstance();
+        final Mark result = realm
+                .where(Mark.class)
+                .equalTo(FIELD_MARK_ID, id)
+                .findFirst();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                if (result.isValid()) {
+                    result.deleteFromRealm();
+                }
+            }
+        });
     }
 
     public static Mark findMark(String name){

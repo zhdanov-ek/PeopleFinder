@@ -13,6 +13,13 @@
     <string name="main_permissions_explanation">You must grant permission on Location. Without it application does not have a sense.</string>
     <string name="grant_permissions">Grant permissions</string>
 
+
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    <string name="save">Save</string>
+    <string name="yes">Yes</string>
+    <string name="edit">Edit</string>
+
     <string name="prompt_username">User Name</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_password_conformation">Confirmation</string>
@@ -56,9 +63,10 @@
     <string name="mark_current_location">Current location</string>
     <string name="mark_name_of_place">Name of place</string>
     <string name="mark_direction_from_you">to %1$s from you</string>
+    <string name="mark_saved">Mark has saved</string>
+    <string name="mark_removed">Mark has removed</string>
 
     <string name="map_it_is_you">It\'s You</string>
     <string name="map_request_for_new_mark">Create new place?</string>
-    <string name="add">Add</string>
 
 </resources>

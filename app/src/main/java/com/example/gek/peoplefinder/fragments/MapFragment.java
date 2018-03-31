@@ -296,24 +296,25 @@ public class MapFragment extends BaseFragment implements
     }
 
     @Override
-    public void onClusterItemInfoWindowClick(Mark mark) {
-        LatLng myLocation = mUserMark.getLatLng();
-        StringBuilder info = new StringBuilder();
-        if (mUserMark.getId().contentEquals(mark.getId())){
-            info.append(getString(R.string.map_it_is_you));
-        } else {
-            info.append(mark.getName()).append("\n");
-            info.append(Utils.getDistance(myLocation, mark.getLatLng())).append("\n");
-            info.append(Utils.getDirection(myLocation, mark.getLatLng())).append("\n");
+    public void onClusterItemInfoWindowClick(final Mark mark) {
+        if (!mUserMark.getId().contentEquals(mark.getId())){
+            Snackbar snackbar = Snackbar.make(mMapView, mark.getName(), Snackbar.LENGTH_LONG);
+            snackbar.setAction(R.string.edit, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(Const.ARG_MARK, mark);
+                    mFragmentChanger.showMarkFragment(bundle);
+                }
+            });
+            snackbar.show();
         }
-
-        Toast.makeText(getContext(), info, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
         Snackbar snackbar = Snackbar.make(mMapView, getString(R.string.map_request_for_new_mark), Snackbar.LENGTH_LONG);
-        snackbar.setAction("Yes", new View.OnClickListener() {
+        snackbar.setAction(R.string.yes, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();

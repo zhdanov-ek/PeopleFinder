@@ -15,4 +15,5 @@ public class Const {
 
     public static final String ARG_LATITUDE = "latitude";
     public static final String ARG_LONGITUDE = "longitude";
+    public static final String ARG_MARK = "mark";
 }

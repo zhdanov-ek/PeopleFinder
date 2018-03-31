@@ -1,12 +1,14 @@
 package com.example.gek.peoplefinder.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.Utils;
+import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.BindString;
@@ -36,8 +39,12 @@ public class MarkFragment extends BaseFragment {
     @BindView(R.id.tilName) protected TextInputLayout tilName;
     @BindView(R.id.tilLat) protected TextInputLayout tilLat;
     @BindView(R.id.tilLng) protected TextInputLayout tilLng;
+    @BindView(R.id.btnAddMark) protected Button btnAddMark;
+    @BindView(R.id.btnRemoveMark) protected Button btnRemoveMark;
     @BindString(R.string.error_wrong_data) protected String wrongData;
     @BindString(R.string.error_name_already_exists) protected String nameAlreadyExists;
+
+    private Mark mOpenedMark;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,7 +58,7 @@ public class MarkFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        insertLatLngFromArg();
+        extractArguments();
     }
 
     @Override
@@ -92,22 +99,31 @@ public class MarkFragment extends BaseFragment {
         }
     }
 
+    @OnClick(R.id.btnRemoveMark) protected void clickRemoveMark(){
+        if (mOpenedMark != null){
+            Db.removeMark(mOpenedMark.getId());
+            Toast.makeText(getContext(), R.string.mark_removed, Toast.LENGTH_SHORT).show();
+            mFragmentChanger.showMapFragment();
+        }
+    }
+
     @Override public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
 
     private void saveMark(){
+        if (mOpenedMark != null){
+            Db.removeMark(mOpenedMark.getId());
+        }
+
         Db.addMark(etMarkName.getText().toString(), null, Double.parseDouble(etLat.getText().toString()),
                 Double.parseDouble(etLng.getText().toString()), false);
 
-        etMarkName.setText("");
-        etLng.setText("");
-        etLat.setText("");
         etMarkName.requestFocus();
         rbManualLocation.setChecked(true);
         mFragmentChanger.hideKeyboard();
-        Toast.makeText(getContext(), "Saved...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.mark_saved, Toast.LENGTH_SHORT).show();
         mFragmentChanger.showMapFragment();
     }
 
@@ -158,7 +174,8 @@ public class MarkFragment extends BaseFragment {
         tilLng.setError(null);
     }
 
-    private void insertLatLngFromArg() {
+    @SuppressLint("SetTextI18n")
+    private void extractArguments() {
         Bundle args = getArguments();
         if (args != null) {
             double latitude = args.getDouble(Const.ARG_LATITUDE, -1);
@@ -166,6 +183,14 @@ public class MarkFragment extends BaseFragment {
             if (latitude != -1 && longitude != -1) {
                 etLat.setText(Double.toString(latitude));
                 etLng.setText(Double.toString(longitude));
+            }
+            mOpenedMark = args.getParcelable(Const.ARG_MARK);
+            if (mOpenedMark != null){
+                etMarkName.setText(mOpenedMark.getName());
+                etLat.setText(Double.toString(mOpenedMark.getLatitude()));
+                etLng.setText(Double.toString(mOpenedMark.getLongitude()));
+                btnAddMark.setText(R.string.save);
+                btnRemoveMark.setVisibility(View.VISIBLE);
             }
         }
     }

@@ -25,6 +25,7 @@ import com.example.gek.peoplefinder.helpers.Const;
 import com.example.gek.peoplefinder.helpers.Db;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.example.gek.peoplefinder.helpers.Utils;
+import com.example.gek.peoplefinder.helpers.map.MarkInfoWindowAdapter;
 import com.example.gek.peoplefinder.helpers.map.MarkRenderer;
 import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.CameraUpdate;
@@ -165,6 +166,7 @@ public class MapFragment extends BaseFragment implements
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
         restoreCameraPosition();
+        mMap.setInfoWindowAdapter(new MarkInfoWindowAdapter(getContext()));
         updateUi();
     }
 

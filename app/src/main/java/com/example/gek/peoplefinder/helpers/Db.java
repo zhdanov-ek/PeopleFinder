@@ -1,20 +1,19 @@
 package com.example.gek.peoplefinder.helpers;
 
-import android.util.Log;
-
 import com.example.gek.peoplefinder.models.Mark;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * DB helper
  */
 
 public class Db {
-    private static final String TAG = "H_DB";
 
     public static String generateUserMarkId(){
         return Connection.getInstance().getUserName() + Connection.getInstance().getUserEmail();
@@ -45,12 +44,16 @@ public class Db {
         return mark;
     }
 
-    private static void printDb(){
+    public static Mark findMark(String name, LatLng latLng){
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Mark> marks = realm.where(Mark.class).findAll();
-        for (Mark mark : marks) {
-            Log.d(TAG, "printDb: " + mark.getName());
+        Mark markResult = null;
+        RealmResults<Mark> searchMarks = realm
+                .where(Mark.class)
+                .equalTo("name", name)
+                .findAllSorted("name", Sort.ASCENDING);
+        if (searchMarks != null && searchMarks.size() > 0){
+            markResult = searchMarks.first();
         }
-        realm.close();
+        return markResult;
     }
 }

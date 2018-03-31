@@ -26,6 +26,7 @@ public class Connection {
     // Constructor
     private Connection(){
         userName = "";
+        lastLocation = null;
         isServiceRunning = false;
         isShowOldPersons = SettingsHelper.isNeedShowOldPersons();
         frequencyLocationUpdate = SettingsHelper.getFrequencyOfUpdate();

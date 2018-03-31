@@ -54,6 +54,7 @@
     <string name="mark_manual_location">Manual location</string>
     <string name="mark_current_location">Current location</string>
     <string name="mark_name_of_place">Name of place</string>
+    <string name="mark_direction_from_you">to %1$s from you</string>
 
     <string name="map_it_is_you">It\'s You</string>
     <string name="map_request_for_new_mark">Create new place?</string>

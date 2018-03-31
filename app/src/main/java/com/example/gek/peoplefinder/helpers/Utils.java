@@ -5,7 +5,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
 
+import com.example.gek.peoplefinder.models.Mark;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class for simple static methods
@@ -94,7 +98,16 @@ public class Utils {
         } else {
             return null;
         }
-
     }
 
+    public static boolean isUsersMark(Mark mark){
+        boolean result = false;
+        if (mark != null){
+            if (mark.getName().contentEquals(Connection.getInstance().getUserName())
+                    && mark.getLatLng().equals(Connection.getInstance().getLastLocation())){
+                result = true;
+            }
+        }
+        return result;
+    }
 }

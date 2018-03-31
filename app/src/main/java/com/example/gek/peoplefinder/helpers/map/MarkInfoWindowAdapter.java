@@ -27,7 +27,7 @@ public class MarkInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     @Override
     public View getInfoWindow(Marker marker) {
-        Mark mark = Db.findMark(marker.getTitle(), null);
+        Mark mark = Db.findMark(marker.getTitle(), marker.getPosition());
         if (mark != null){
             if (Utils.isUsersMark(mark)){
                 View view = LayoutInflater.from(mContext).inflate(R.layout.layout_marker_info_window_user, null);

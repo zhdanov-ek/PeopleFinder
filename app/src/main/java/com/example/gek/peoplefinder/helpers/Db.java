@@ -15,6 +15,10 @@ import io.realm.Sort;
 
 public class Db {
 
+    private static final String FIELD_MARK_NAME = "name";
+    private static final String FIELD_MARK_LATITUDE = "latitude";
+    private static final String FIELD_MARK_LONGITUDE = "longitude";
+
     public static String generateUserMarkId(){
         return Connection.getInstance().getUserName() + Connection.getInstance().getUserEmail();
     }
@@ -44,13 +48,28 @@ public class Db {
         return mark;
     }
 
+    public static Mark findMark(String name){
+        Realm realm = Realm.getDefaultInstance();
+        Mark markResult = null;
+        RealmResults<Mark> searchMarks = realm
+                .where(Mark.class)
+                .equalTo(FIELD_MARK_NAME, name)
+                .findAllSorted(FIELD_MARK_NAME, Sort.ASCENDING);
+        if (searchMarks != null && searchMarks.size() > 0){
+            markResult = searchMarks.first();
+        }
+        return markResult;
+    }
+
     public static Mark findMark(String name, LatLng latLng){
         Realm realm = Realm.getDefaultInstance();
         Mark markResult = null;
         RealmResults<Mark> searchMarks = realm
                 .where(Mark.class)
-                .equalTo("name", name)
-                .findAllSorted("name", Sort.ASCENDING);
+                .equalTo(FIELD_MARK_NAME, name)
+                .equalTo(FIELD_MARK_LATITUDE, latLng.latitude)
+                .equalTo(FIELD_MARK_LONGITUDE, latLng.longitude)
+                .findAllSorted(FIELD_MARK_NAME, Sort.ASCENDING);
         if (searchMarks != null && searchMarks.size() > 0){
             markResult = searchMarks.first();
         }

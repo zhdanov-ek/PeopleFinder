@@ -29,6 +29,7 @@
     <string name="error_account_not_exists">Account does not exists</string>
     <string name="error_authentication_failed">Authentication failed</string>
     <string name="error_account_already_exists">Account already exists</string>
+    <string name="error_name_already_exists">Name already exists</string>
 
     <string name="longitude">Longitude</string>
     <string name="latitude">Latitude</string>

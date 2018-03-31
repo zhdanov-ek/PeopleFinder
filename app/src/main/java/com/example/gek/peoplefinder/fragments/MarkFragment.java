@@ -37,6 +37,7 @@ public class MarkFragment extends BaseFragment {
     @BindView(R.id.tilLat) protected TextInputLayout tilLat;
     @BindView(R.id.tilLng) protected TextInputLayout tilLng;
     @BindString(R.string.error_wrong_data) protected String wrongData;
+    @BindString(R.string.error_name_already_exists) protected String nameAlreadyExists;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,7 +85,9 @@ public class MarkFragment extends BaseFragment {
     }
 
     @OnClick(R.id.btnAddMark) protected void clickAddMark(){
-        if ( validateLatLng() && validateName() ){
+        if ( validateLatLng()
+                && validateName()
+                && !isNameExist(etMarkName.getText().toString())){
             saveMark();
         }
     }
@@ -135,6 +138,16 @@ public class MarkFragment extends BaseFragment {
             return false;
         } else {
             tilName.setError(null);
+            return true;
+        }
+    }
+
+    private boolean isNameExist(String name){
+        if (Db.findMark(name) == null){
+            return false;
+        } else {
+            tilName.setError(nameAlreadyExists);
+            etMarkName.requestFocus();
             return true;
         }
     }

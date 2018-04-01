@@ -28,6 +28,10 @@ public class Connection {
         userName = "";
         lastLocation = null;
         isServiceRunning = false;
+        refreshData();
+    }
+
+    public void refreshData(){
         isShowOldPersons = SettingsHelper.isNeedShowOldPersons();
         frequencyLocationUpdate = SettingsHelper.getFrequencyOfUpdate();
         userName = SettingsHelper.getUserName();

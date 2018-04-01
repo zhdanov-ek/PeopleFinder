@@ -24,6 +24,7 @@ import com.example.gek.peoplefinder.auth.AuthMode;
 import com.example.gek.peoplefinder.auth.FacebookAuth;
 import com.example.gek.peoplefinder.auth.GoogleAuth;
 import com.example.gek.peoplefinder.auth.UserManager;
+import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.SettingsHelper;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -209,6 +210,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
 
     private void loginComplete(SyncUser user) {
         UserManager.setActiveUser(user);
+        Connection.getInstance().refreshData();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity  implements
              * executed before reaching here.
              */
             UserManager.logoutActiveUser();
-            SettingsHelper.signOut();
+            SettingsHelper.clearAll();
             logoutAfterClose = false;
         }
 

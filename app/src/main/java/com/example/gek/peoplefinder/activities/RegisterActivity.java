@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.example.gek.peoplefinder.R;
 import com.example.gek.peoplefinder.auth.UserManager;
+import com.example.gek.peoplefinder.helpers.Connection;
+import com.example.gek.peoplefinder.helpers.SettingsHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -125,6 +127,8 @@ public class RegisterActivity extends AppCompatActivity implements SyncUser.Call
 
     private void registrationComplete(SyncUser user) {
         UserManager.setActiveUser(user);
+        SettingsHelper.setUserName(tietUserName.getText().toString());
+        Connection.getInstance().refreshData();
         Intent intent = new Intent(this, SignInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

@@ -33,7 +33,7 @@ public class SettingsHelper {
         mPref = PreferenceManager.getDefaultSharedPreferences(applicationContext);
     }
 
-    public static void signOut(){
+    public static void clearAll(){
         mPref.edit().clear().apply();
     }
 

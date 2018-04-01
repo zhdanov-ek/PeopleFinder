@@ -69,11 +69,12 @@ public class MarksListFragment extends BaseFragment{
     }
 
     private void updateUI(RealmResults<Mark> marks) {
-        if (recyclerView.getAdapter() == null) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            recyclerView.setAdapter(new MarksAdapter(marks));
+        if (recyclerView != null){
+            if (recyclerView.getAdapter() == null) {
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                recyclerView.setAdapter(new MarksAdapter(marks));
+            }
+            ((MarksAdapter)recyclerView.getAdapter()).swapData(marks);
         }
-
-        ((MarksAdapter)recyclerView.getAdapter()).swapData(marks);
     }
 }

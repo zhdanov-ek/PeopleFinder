@@ -29,7 +29,6 @@ import java.util.Date;
 public class LocationService extends Service {
 
     private Handler handler = new Handler();
-    private static final String TAG = "LOCATION_SERVICE";
     private LogHelper mLogHelper;
     private LocationManager mLocationManager;
     private Date mLastDate;
@@ -55,7 +54,6 @@ public class LocationService extends Service {
                         .append(" ")
                         .append(location.getProvider()).toString();
 
-                Log.d(TAG, msg);
                 mLogHelper.writeLog(msg);
                 stopLocationUpdates();
             }
@@ -80,7 +78,6 @@ public class LocationService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate: ");
         super.onCreate();
         mLastDate = new Date();
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -90,7 +87,6 @@ public class LocationService extends Service {
         }
         mLogHelper.clearLog();
         mLogHelper.writeLog("Service created");
-        Log.d(TAG, "onStartCommand: setServiceRunning - true");
     }
 
 
@@ -150,20 +146,6 @@ public class LocationService extends Service {
 
     }
 
-
-//    private void writePositionToDb(Double latitude, Double longitude){
-//        Log.d(TAG, "writePositionToDb: ");
-//        Warior warior = new Warior();
-//        warior.setLatitude(latitude);
-//        warior.setLongitude(longitude);
-//        warior.setName(Connection.getInstance().getUserName());
-//        warior.setTeam(Connection.getInstance().getTeam());
-//        warior.setKey(Connection.getInstance().getUserKey());
-//        warior.setDate(new Date());
-//        FbHelper.updateWariorPosition(warior);
-//        mLogHelper.writeLog(latitude + " - " + longitude + " (write to DB)", new Date());
-//    }
-
     private void showNotification() {
         NotificationCompat.Builder nfBuilder =
                 new NotificationCompat.Builder(this)
@@ -181,7 +163,7 @@ public class LocationService extends Service {
                         this, 0, intent, 0);
         nfBuilder.setContentIntent(pendingIntent);
 
-        // Send notification and mark service how high priority
+        // Send notification and set high priority to service
         startForeground(Const.NOTIFICATION_ID, nfBuilder.build());
     }
 
@@ -203,7 +185,6 @@ public class LocationService extends Service {
     @Override
     public void onDestroy() {
         mLocationManager.removeUpdates(mLocationListener);
-        Log.d(TAG, "onDestroy: ");
         super.onDestroy();
     }
 

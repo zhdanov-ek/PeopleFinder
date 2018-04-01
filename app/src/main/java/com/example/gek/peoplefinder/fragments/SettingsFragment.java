@@ -119,6 +119,8 @@ public class SettingsFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        setToolbarTitle(getString(R.string.title_settings));
         mCallbackDrawerMenuStateChanger.setMenuState(StateMenu.SETTINGS);
     }
 

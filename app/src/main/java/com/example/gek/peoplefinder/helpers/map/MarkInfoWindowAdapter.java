@@ -35,9 +35,9 @@ public class MarkInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
             } else {
                 View view = LayoutInflater.from(mContext).inflate(R.layout.layout_marker_info_window, null);
 
-                TextView tvName = (TextView) view.findViewById(R.id.tvName);
-                TextView tvDate = (TextView) view.findViewById(R.id.tvDate);
-                TextView tvDistance = (TextView) view.findViewById(R.id.tvDistance);
+                TextView tvName = view.findViewById(R.id.tvName);
+                TextView tvDate = view.findViewById(R.id.tvDate);
+                TextView tvDistance = view.findViewById(R.id.tvDistance);
 
                 PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
                 String ago = prettyTime.format(mark.getDate());

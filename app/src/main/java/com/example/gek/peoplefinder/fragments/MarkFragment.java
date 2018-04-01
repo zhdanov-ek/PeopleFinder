@@ -51,7 +51,6 @@ public class MarkFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_mark, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-
         return rootView;
     }
 
@@ -64,6 +63,7 @@ public class MarkFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        setToolbarTitle(getString(R.string.title_edit_mark));
         mCallbackDrawerMenuStateChanger.setMenuState(StateMenu.MARK);
     }
 

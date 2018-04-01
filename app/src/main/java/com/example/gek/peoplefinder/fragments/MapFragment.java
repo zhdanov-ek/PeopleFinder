@@ -105,7 +105,7 @@ public class MapFragment extends BaseFragment implements
         try {
             rootView = inflater.inflate(R.layout.fragment_map, container, false);
             MapsInitializer.initialize(this.getActivity());
-            mMapView = (MapView) rootView.findViewById(R.id.map);
+            mMapView = rootView.findViewById(R.id.map);
             mMapView.onCreate(savedInstanceState);
             mMapView.getMapAsync(this);
         } catch (InflateException e) {
@@ -118,6 +118,8 @@ public class MapFragment extends BaseFragment implements
     @Override
     public void onStart() {
         super.onStart();
+
+        setToolbarTitle(getString(R.string.title_map));
         mCallbackDrawerMenuStateChanger.setMenuState(StateMenu.MAP);
     }
 

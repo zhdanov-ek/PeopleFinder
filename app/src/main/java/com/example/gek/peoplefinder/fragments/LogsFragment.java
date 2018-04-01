@@ -51,6 +51,8 @@ public class LogsFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        setToolbarTitle(getString(R.string.title_logs));
         mCallbackDrawerMenuStateChanger.setMenuState(StateMenu.LOGS);
     }
 

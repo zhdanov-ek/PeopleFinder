@@ -7,4 +7,5 @@ public interface FragmentChanger {
     void showMarkFragment(Bundle bundle);
     void showMapFragment();
     void hideKeyboard();
+    void setToolbarTitle(String text);
 }

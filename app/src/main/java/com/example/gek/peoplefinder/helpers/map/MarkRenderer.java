@@ -52,11 +52,11 @@ public class MarkRenderer extends DefaultClusterRenderer<Mark> {
         View multiProfile = LayoutInflater.from(context).inflate(R.layout.multi_profile, null);
         multiProfile.setLayoutParams(new ViewGroup.LayoutParams(mWidth, mHeight));
         mClusterIconGenerator.setContentView(multiProfile);
-        mClusterImageView = (ImageView) multiProfile.findViewById(R.id.image);
+        mClusterImageView = multiProfile.findViewById(R.id.image);
 
         View markView = LayoutInflater.from(context).inflate(R.layout.one_profile, null);
-        mShortMarkNameTextView = (TextView) markView.findViewById(R.id.shortMarkNameTextView);
-        mIconMarkImageView = (ImageView) markView.findViewById(R.id.iconMarkImageView);
+        mShortMarkNameTextView = markView.findViewById(R.id.shortMarkNameTextView);
+        mIconMarkImageView = markView.findViewById(R.id.iconMarkImageView);
         markView.setLayoutParams(new ViewGroup.LayoutParams(mWidth, mHeight));
 
         mIconGenerator.setContentView(markView);

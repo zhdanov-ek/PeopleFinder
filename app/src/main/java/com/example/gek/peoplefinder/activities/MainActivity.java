@@ -32,6 +32,7 @@ import com.example.gek.peoplefinder.enums.StateMenu;
 import com.example.gek.peoplefinder.fragments.LogsFragment;
 import com.example.gek.peoplefinder.fragments.MapFragment;
 import com.example.gek.peoplefinder.fragments.MarkFragment;
+import com.example.gek.peoplefinder.fragments.MarksListFragment;
 import com.example.gek.peoplefinder.fragments.SettingsFragment;
 import com.example.gek.peoplefinder.helpers.Connection;
 import com.example.gek.peoplefinder.helpers.Const;
@@ -100,6 +101,9 @@ public class MainActivity extends AppCompatActivity  implements
                 case MARK:
                     mNavigationView.setCheckedItem(R.id.nav_mark);
                     break;
+                case ALL_MARKS:
+                    mNavigationView.setCheckedItem(R.id.nav_all_marks);
+                    break;
                 case LOGS:
                     mNavigationView.setCheckedItem(R.id.nav_logs);
                     break;
@@ -108,6 +112,11 @@ public class MainActivity extends AppCompatActivity  implements
                     break;
             }
         }
+    }
+
+    @Override
+    public void setToolbarTitle(String title) {
+        toolbar.setTitle(title);
     }
 
     private void initDrawer(){
@@ -121,7 +130,7 @@ public class MainActivity extends AppCompatActivity  implements
         mNavigationView.setNavigationItemSelectedListener(this);
 
         ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.tvName)).setText(SettingsHelper.getUserName());
-        ImageView ivProfileImage = (ImageView) mNavigationView.getHeaderView(0).findViewById(R.id.ivProfileImage);
+        ImageView ivProfileImage = mNavigationView.getHeaderView(0).findViewById(R.id.ivProfileImage);
         String urlImage = SettingsHelper.getUserProfileImageUrl();
         RequestOptions options = new RequestOptions()
                 .circleCrop()
@@ -205,6 +214,10 @@ public class MainActivity extends AppCompatActivity  implements
 
             case R.id.nav_mark:
                 showMarkFragment(null);
+                break;
+
+            case R.id.nav_all_marks:
+                showMarksListFragment();
                 break;
 
             case R.id.nav_logs:
@@ -292,6 +305,16 @@ public class MainActivity extends AppCompatActivity  implements
             MarkFragment markFragment = new MarkFragment();
             markFragment.setArguments(bundle);
             ft.replace(R.id.container, markFragment, null);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+    }
+
+    private void showMarksListFragment(){
+        if (mStateMenu != StateMenu.ALL_MARKS){
+            clearBackStack();
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            ft.replace(R.id.container, new MarksListFragment(), null);
             ft.addToBackStack(null);
             ft.commit();
         }

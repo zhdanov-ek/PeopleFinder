@@ -69,4 +69,18 @@
     <string name="map_it_is_you">It\'s You</string>
     <string name="map_request_for_new_mark">Create new place?</string>
 
+    <!-- MENU -->
+    <string name="menu_map">Map</string>
+    <string name="menu_new_mark">New Mark</string>
+    <string name="menu_all_mark">All marks</string>
+    <string name="menu_logs">Logs</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_sign_out">Sign out</string>
+
+    <!-- TITLES OF SCREENS-->
+    <string name="title_edit_mark">Edit mark</string>
+    <string name="title_map">Map</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_logs">Logs</string>
+    <string name="title_all_marks">All marks</string>
 </resources>

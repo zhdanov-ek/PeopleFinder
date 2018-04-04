@@ -57,6 +57,9 @@
         </activity>
 
         <service android:name=".LocationService"/>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="2c419daaf2fdcc953847be792cac8e632f67b4da" />
     </application>
 
 </manifest>

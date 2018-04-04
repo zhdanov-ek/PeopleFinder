@@ -2,6 +2,8 @@ package com.example.gek.peoplefinder.helpers;
 
 
 public class Const {
+    public static final String OWNER_DATA = "zhdanov.ek@gmail.com";
+
     public static final int NOTIFICATION_ID = 1;
 
     public static final int RC_INIT_LOCATION = 1;

@@ -103,7 +103,7 @@ public class RegisterActivity extends AppCompatActivity implements SyncUser.Call
             focusView.requestFocus();
         } else {
             showProgress(true);
-            SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), AUTH_URL, new SyncUser.Callback() {
+            SyncUser.logInAsync(SyncCredentials.usernamePassword(username, password, true), AUTH_URL, new SyncUser.Callback<SyncUser>() {
                 @Override
                 public void onSuccess(SyncUser user) {
                     registrationComplete(user);
@@ -114,7 +114,8 @@ public class RegisterActivity extends AppCompatActivity implements SyncUser.Call
                     showProgress(false);
                     String errorMsg;
                     switch (error.getErrorCode()) {
-                        case EXISTING_ACCOUNT: errorMsg = getString(R.string.error_account_already_exists);
+                        case EXISTING_ACCOUNT:
+                            errorMsg = getString(R.string.error_account_already_exists);
                             break;
                         default:
                             errorMsg = error.toString();
@@ -156,9 +157,11 @@ public class RegisterActivity extends AppCompatActivity implements SyncUser.Call
         });
     }
 
-    @Override
-    public void onSuccess(SyncUser user) {
-        registrationComplete(user);
+     @Override
+    public void onSuccess(Object result) {
+        if (result instanceof SyncUser){
+            registrationComplete((SyncUser) result);
+        }
     }
 
     @Override

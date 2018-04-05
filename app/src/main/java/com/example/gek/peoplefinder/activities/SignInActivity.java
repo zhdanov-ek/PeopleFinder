@@ -88,7 +88,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         // Check if we already got a user, if yes, just continue automatically
         if (savedInstanceState == null) {
             if (!ACTION_IGNORE_CURRENT_USER.equals(getIntent().getAction())) {
-                final SyncUser user = SyncUser.currentUser();
+                final SyncUser user = SyncUser.current();
                 if (user != null) {
                     loginComplete(user);
                 }
@@ -117,7 +117,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
                                 }
                                 // Login to Realm
                                 SyncCredentials credentials = SyncCredentials.facebook(loginResult.getAccessToken().getToken());
-                                SyncUser.loginAsync(credentials, AUTH_URL, SignInActivity.this);
+                                SyncUser.logInAsync(credentials, AUTH_URL, SignInActivity.this);
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -145,7 +145,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
                 }
 
                 SyncCredentials credentials = SyncCredentials.google(acct.getIdToken());
-                SyncUser.loginAsync(credentials, AUTH_URL, SignInActivity.this);
+                SyncUser.logInAsync(credentials, AUTH_URL, SignInActivity.this);
             }
 
             @Override
@@ -244,7 +244,7 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
         } else {
             showProgress(true);
             UserManager.setAuthMode(AuthMode.PASSWORD);
-            SyncUser.loginAsync(SyncCredentials.usernamePassword(email, password, false), PeopleFinderApplication.AUTH_URL, this);
+            SyncUser.logInAsync(SyncCredentials.usernamePassword(email, password, false), PeopleFinderApplication.AUTH_URL, this);
         }
     }
 
@@ -274,12 +274,14 @@ public class SignInActivity extends AppCompatActivity implements SyncUser.Callba
 
     // Realm auth success
     @Override
-    public void onSuccess(SyncUser user) {
-        if (UserManager.getAuthMode() == AuthMode.PASSWORD){
-            SettingsHelper.setUserName(tietUserName.getText().toString());
+    public void onSuccess(Object result) {
+        if (result instanceof SyncUser){
+            if (UserManager.getAuthMode() == AuthMode.PASSWORD){
+                SettingsHelper.setUserName(tietUserName.getText().toString());
+            }
+            showProgress(false);
+            loginComplete((SyncUser) result);
         }
-        showProgress(false);
-        loginComplete(user);
     }
 
     @Override

@@ -71,7 +71,8 @@ public class Db {
         RealmResults<Mark> searchMarks = realm
                 .where(Mark.class)
                 .equalTo(FIELD_MARK_NAME, name)
-                .findAllSorted(FIELD_MARK_NAME, Sort.ASCENDING);
+                .findAll()
+                .sort(FIELD_MARK_NAME, Sort.ASCENDING);
         if (searchMarks != null && searchMarks.size() > 0){
             markResult = searchMarks.first();
         }
@@ -86,7 +87,8 @@ public class Db {
                 .equalTo(FIELD_MARK_NAME, name)
                 .equalTo(FIELD_MARK_LATITUDE, latLng.latitude)
                 .equalTo(FIELD_MARK_LONGITUDE, latLng.longitude)
-                .findAllSorted(FIELD_MARK_NAME, Sort.ASCENDING);
+                .findAll()
+                .sort(FIELD_MARK_NAME, Sort.ASCENDING);
         if (searchMarks != null && searchMarks.size() > 0){
             markResult = searchMarks.first();
         }

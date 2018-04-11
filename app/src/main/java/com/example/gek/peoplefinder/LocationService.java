@@ -42,7 +42,7 @@ public class LocationService extends Service {
     private android.location.LocationListener mLocationListener = new android.location.LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if (location != null) {
+            if (location != null && Connection.getInstance().isServiceRunning()) {
                 Connection.getInstance().setLastLocation(
                         new LatLng(location.getLatitude(), location.getLongitude()));
                 Db.addMark(Connection.getInstance().getUserName(), SettingsHelper.getUserProfileImageUrl(),

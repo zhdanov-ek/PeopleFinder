@@ -11,6 +11,7 @@ import io.realm.ObjectServerError;
 import io.realm.PermissionManager;
 import io.realm.Realm;
 import io.realm.SyncConfiguration;
+import io.realm.SyncSession;
 import io.realm.SyncUser;
 import io.realm.permissions.AccessLevel;
 import io.realm.permissions.PermissionRequest;
@@ -30,25 +31,19 @@ public class UserManager {
     }
 
     public static void logoutActiveUser() {
+        if (SyncUser.current() != null){
+            SyncUser.current().logOut();
+        }
+        Realm.removeDefaultConfiguration();
         switch (mode) {
             case PASSWORD: {
-                SyncUser.current().logOut();
                 break;
             }
             case FACEBOOK: {
                 LoginManager.getInstance().logOut();
-                Realm.removeDefaultConfiguration();
-                if (SyncUser.current() != null) {
-                    try {
-                        SyncUser.current().logOut();
-                    } catch (Exception e) {
-                        Log.d("AuthUtility:logout()", "logout: " + e);
-                    }
-                }
                 break;
             }
             case GOOGLE: {
-                // the connection is handled by `enableAutoManage` mode
                 break;
             }
         }
@@ -56,8 +51,16 @@ public class UserManager {
 
     // Configure Realm for the current active user
     public static void setActiveUser(SyncUser user) {
-        SyncConfiguration defaultConfig = new SyncConfiguration.Builder(user, PeopleFinderApplication.REALM_URL).build();
-        Realm.setDefaultConfiguration(defaultConfig);
+        SyncConfiguration configuration = new SyncConfiguration.Builder(user, PeopleFinderApplication.REALM_URL)
+                .errorHandler(new SyncSession.ErrorHandler() {
+                    @Override
+                    public void onError(SyncSession session, ObjectServerError error) {
+                        Log.d(TAG, "onError: session: " + session.toString());
+                        Log.d(TAG, "onError: error: " + error.toString());
+                    }
+                })
+                .build();
+        Realm.setDefaultConfiguration(configuration);
         setPublicPermissionForData(user);
     }
 
@@ -67,7 +70,7 @@ public class UserManager {
             PermissionManager permissionManager = user.getPermissionManager();
 
             // Create request
-            UserCondition condition = UserCondition.userId(user.getIdentity());
+            UserCondition condition = UserCondition.noExistingPermissions();
             PermissionRequest request = new PermissionRequest(condition, PeopleFinderApplication.REALM_URL, AccessLevel.ADMIN);
             permissionManager.applyPermissions(request, new PermissionManager.ApplyPermissionsCallback() {
                 @Override
